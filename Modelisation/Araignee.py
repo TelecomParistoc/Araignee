@@ -18,18 +18,18 @@ def moveTo(vector,ObjetsABouger):
     #update(listeObjets)
     
 
-def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
+def rotation(origi1,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    N=100#effectuer la rotation en N fois permet d'éviter la déformation des pièces à cause du calcul en temps discret mais plus long à calculer
+    N=100#effectuer la rotation en N fois permet d'éviter la déformation des pièces à cau2 du calcul en temps discret mais plus long à calculer
     vector=np.multiply(vector,w*dt/N)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origi1)
         for a in range(N):
             for n in range(len(objetsAPivoter[j])):
                 objetsAPivoter[j][n]=np.add(objetsAPivoter[j][n],np.cross(vector,objetsAPivoter[j][n]))
         for p in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
+            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origi1
     #update(listeObjets)
 
 
@@ -43,55 +43,56 @@ def update(listeObjets):
                 Coord[a].append(objet[b][a])
     
         ax.add_collection3d(Poly3DCollection([zip(Coord[0],Coord[1],Coord[2])]))
-    ax.autoscale_view(None,True,True,True)
+    ax.autoscale_view(True,True,True,True)
     ax.set_xlim3d(-100,100)
     ax.set_ylim3d(-100,100)
     ax.set_zlim3d(-100,100)
-    plt.pause(0.00000001)
+    plt.pau2(0.00000001)
     
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
     
 def Time(iterations):
-    global vitesse,motSpeedList
+    global vites2,motSpeedList
     for i in range(iterations):
         if not contact:
-            vitesse[2]-=g*dt*100# en cm.s-1
-        moveTo(np.multiply(vitesse,dt),listeObjets)
+            vites2[2]-=g*dt*100# en cm.s-1
+        moveTo(np.multiply(vites2,dt),listeObjets)
         for a in range(4):
             if motSpeedList[a][1]!=0:
-                print(motSpeedList[a][1])
                 rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])
+            #if motSpeedList[a][0]!=0:
+                #vecPatte1=ObjetParNom["Patte"]
         testContact()
         update(listeObjets)
     
 
 def testContact():
-    global contactNW,contactNE,contactSE,contactSW,contact,vitesse
+    global contact0,contact1,contact2,contact3,contact,vites2
     i=0
-    n=len(ObjetParNom["supportNW"])
-    while i<n and not contactNW:
-        if ObjetParNom["supportNW"][i][2]<=0:
-            contactNW=True
+    n=len(ObjetParNom["support0"])
+    while i<n and not contact0:
+        if ObjetParNom["support0"][i][2]<=0:
+            contact0=True
         i+=1
     i=0
-    while i<n and not contactNE:
-        if ObjetParNom["supportNE"][i][2]<=0:
-            contactNE=True
+    while i<n and not contact1:
+        if ObjetParNom["support1"][i][2]<=0:
+            contact1=True
         i+=1 
     i=0
-    while i<n and not contactSE:
-        if ObjetParNom["supportSE"][i][2]<=0:
-            contactSE=True
+    while i<n and not contact2:
+        if ObjetParNom["support2"][i][2]<=0:
+            contact2=True
         i+=1 
     i=0
-    while i<n and not contactSW:
-        if ObjetParNom["supportSW"][i][2]<=0:
-            contactSW=True
+    while i<n and not contact3:
+        if ObjetParNom["support3"][i][2]<=0:
+            contact3=True
         i+=1 
-    if (contactNW or contactNE or contactSE or contactSW):
+    if (contact0 or contact1 or contact2 or contact3):
         contact=True
-        vitesse[2]=0
+        vites2[2]=0
     
     
 #--------------Initialisation---------------
@@ -101,88 +102,91 @@ plt.ion()
 plt.show()
 longueur=20
 largeur=10
-longueur1Patte=5
-longueur2Patte=10
+longueurSupPatte=5
+longueurInfPatte=10
 centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
 SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
 
-patte1NW=[NW,np.add(NW,[-longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
-patte2NW=[patte1NW[1],np.add(patte1NW[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+patteSup0=[0,np.add(0,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteInf0=[patteSup0[1],np.add(patteSup0[1],[0,0,-longueurInfPatte])]
 
-patte1NE=[NE,np.add(NE,[+longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
-patte2NE=[patte1NE[1],np.add(patte1NE[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+patteSup1=[1,np.add(1,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteInf1=[patteSup1[1],np.add(patteSup1[1],[0,0,-longueurInfPatte])]
 
-patte1SE=[SE,np.add(SE,[+longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
-patte2SE=[patte1SE[1],np.add(patte1SE[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+patteSup2=[2,np.add(2,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteInf2=[patteSup2[1],np.add(patteSup2[1],[0,0,-longueurInfPatte])]
 
-patte1SW=[SW,np.add(SW,[-longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
-patte2SW=[patte1SW[1],np.add(patte1SW[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+patteSup3=[3,np.add(3,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteInf3=[patteSup3[1],np.add(patteSup3[1],[0,0,-longueurInfPatte])]
 
 pointsParSupport=15
 rayonSupport=2
-supportNW=[]
-supportNE=[]
-supportSE=[]
-supportSW=[]
+support0=[]
+support1=[]
+support2=[]
+support3=[]
 for i in range(pointsParSupport):
-    supportNW.append(np.add(patte2NW[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    supportNE.append(np.add(patte2NE[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    supportSE.append(np.add(patte2SE[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    supportSW.append(np.add(patte2SW[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-listeObjets=[[NW,NE,SE,SW],[centre],patte1NW,patte2NW,patte1NE,patte2NE,patte1SE,patte2SE,patte1SW,patte2SW,supportNW,supportNE,supportSE,supportSW]
+    support0.append(np.add(patteInf0[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support1.append(np.add(patteInf1[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support2.append(np.add(patteInf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support3.append(np.add(patteInf3[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+listeObjets=[[0,1,2,3],[centre],patteSup0,patteInf0,patteSup1,patteInf1,patteSup2,patteInf2,patteSup3,patteInf3,support0,support1,support2,support3]
 
 ObjetParNom={}
 
 ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
-ObjetParNom["patte1NW"]=listeObjets[2]
-ObjetParNom["patte2NW"]=listeObjets[3]
-ObjetParNom["patte1NE"]=listeObjets[4]
-ObjetParNom["patte2NE"]=listeObjets[5]
-ObjetParNom["patte1SE"]=listeObjets[6]
-ObjetParNom["patte2SE"]=listeObjets[7]
-ObjetParNom["patte1SW"]=listeObjets[8]
-ObjetParNom["patte2SW"]=listeObjets[9]
-ObjetParNom["supportNW"]=listeObjets[10]
-ObjetParNom["supportNE"]=listeObjets[11]
-ObjetParNom["supportSE"]=listeObjets[12]
-ObjetParNom["supportSW"]=listeObjets[13]
+ObjetParNom["patteSup0"]=listeObjets[2]
+ObjetParNom["patteInf0"]=listeObjets[3]
+ObjetParNom["patteSup1"]=listeObjets[4]
+ObjetParNom["patteInf1"]=listeObjets[5]
+ObjetParNom["patteSup2"]=listeObjets[6]
+ObjetParNom["patteInf2"]=listeObjets[7]
+ObjetParNom["patteSup3"]=listeObjets[8]
+ObjetParNom["patteInf3"]=listeObjets[9]
+ObjetParNom["support0"]=listeObjets[10]
+ObjetParNom["support1"]=listeObjets[11]
+ObjetParNom["support2"]=listeObjets[12]
+ObjetParNom["support3"]=listeObjets[13]
 
-ObjetParNom["patte0"]=[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]]
-ObjetParNom["patte1"]=[ObjetParNom["patte1NE"],ObjetParNom["patte2NE"],ObjetParNom["supportNE"]]
-ObjetParNom["patte2"]=[ObjetParNom["patte1SE"],ObjetParNom["patte2SE"],ObjetParNom["supportSE"]]
-ObjetParNom["patte3"]=[ObjetParNom["patte1SW"],ObjetParNom["patte2SW"],ObjetParNom["supportSW"]]
+ObjetParNom["patte0"]=[ObjetParNom["patteSup0"],ObjetParNom["patteInf0"],ObjetParNom["support0"]]
+ObjetParNom["patte1"]=[ObjetParNom["patteSup1"],ObjetParNom["patteInf1"],ObjetParNom["support1"]]
+ObjetParNom["patte2"]=[ObjetParNom["patteSup2"],ObjetParNom["patteInf2"],ObjetParNom["support2"]]
+ObjetParNom["patte3"]=[ObjetParNom["patteSup3"],ObjetParNom["patteInf3"],ObjetParNom["support3"]]
 
 
 update(listeObjets)
 
-global contactNW,contactNE,contactSE,contactSW,contact
-contactNW=False#Permet de vérifier si chaque patte touche le sol ou non
-contactNE=False
-contactSE=False
-contactSW=False
+global contact0,contact1,contact2,contact3,contact
+contact0=False#Permet de vérifier si chaque patte touche le sol ou non
+contact1=False
+contact2=False
+contact3=False
 contact=False #permet de vérifier si le robot est en contact avec le sol
 
 
 
-dt=0.01#dt intervalle de temps en secondes
-global vitesseChute
-vitesse=[0,0,0]
+dt=0.01#dt intervalle de temps en 2condes
+global vites2Chute
+vites2=[0,0,0]
 g=9.81
 
 
-NWMotSpeed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-NEMotSpeed=[0,100]
-SEMotSpeed=[0,0]
-SWMotSpeed=[0,0]
-global motSpeedList
-motSpeedList=[NWMotSpeed,NEMotSpeed,SEMotSpeed,SWMotSpeed]
+Mot0Speed=[0,0]# vites2 des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+Mot1Speed=[0,0]
+Mot2Speed=[0,0]
+Mot3Speed=[0,0]
+Mot0Angle=0
+Mot1Angle=0
+Mot2Angle=0
+Mot3Angle=0
 
-
-
+global motSpeedList,motAngleList
+motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
+motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
 #------------------------------------------
 
 
