@@ -23,21 +23,21 @@ def moveTo(vector):
     update(listeObjets)
     
 
-def rotation(origine,vector,w):#w = angle de rotation, vector= vecteur directeur de l'axe de rotation
+def rotation(origine,vector,w,objetsAPivoter):#w = angle de rotation, vector= vecteur directeur de l'axe de rotation
     n=100
     vector = normalized(vector)
     vector=np.multiply(vector,(w/n))
-    for j in range(len(listeObjets)):
-        for m in range(len(listeObjets[j])):#changement de référentiel
-            listeObjets[j][m]=np.subtract(listeObjets[j][m],origine)
+    for j in range(len(objetsAPivoter)):
+        for m in range(len(objetsAPivoter[j])):#changement de référentiel
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
         for i in range(n):
-            for k in range(len(listeObjets[j])):
-                print(listeObjets[j][k])
-                print(np.cross(vector,listeObjets[j][k]))
-                listeObjets[j][k]=np.add(listeObjets[j][k],np.cross(vector,listeObjets[j][k]))
-                print(listeObjets[j][k])
-        for m in range(len(listeObjets[j])):#changement de référentiel
-            listeObjets[j][m]=listeObjets[j][m]+origine
+            for k in range(len(objetsAPivoter[j])):
+                print(objetsAPivoter[j][k])
+                print(np.cross(vector,objetsAPivoter[j][k]))
+                objetsAPivoter[j][k]=np.add(objetsAPivoter[j][k],np.cross(vector,objetsAPivoter[j][k]))
+                print(objetsAPivoter[j][k])
+        for m in range(len(objetsAPivoter[j])):#changement de référentiel
+            objetsAPivoter[j][m]=objetsAPivoter[j][m]+origine
     update(listeObjets)
 
 
@@ -105,8 +105,11 @@ ObjetParNom["patte2SW"]=listeObjets[9]
 update(listeObjets)
 
 #------------------------------------------
-      
-        
+
+# tests rotation d'une patte:
+rotation(ObjetParNom["plateforme"][0],[0,0,-1],np.pi/4,[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"]])
+
+
         
         
         
