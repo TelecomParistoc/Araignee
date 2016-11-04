@@ -23,7 +23,7 @@ def moveTo(vector):
     update(listeObjets)
     
 
-def rotation(origine,vector,w):
+def rotation(origine,vector,w):#w = angle de rotation
     n=100
     vector=np.multiply(vector,(w/n))
     for j in range(len(listeObjets)):
@@ -59,6 +59,8 @@ def update(listeObjets):
 
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
+    
+
         
 
 #--------------Initialisation---------------
@@ -67,15 +69,38 @@ ax = Axes3D(fig)
 plt.ion()
 longueur=20
 largeur=10
+longueur1Patte=5
+longueur2Patte=10
 centre=[0,3,5]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
 SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
-listeObjets=[[NW,NE,SE,SW],[centre]]
+
+patte1NW=[NW,np.add(NW,[-longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
+patte2NW=[patte1NW[1],np.add(patte1NW[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+
+patte1NE=[NE,np.add(NE,[+longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
+patte2NE=[patte1NE[1],np.add(patte1NE[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+
+patte1SE=[SE,np.add(SE,[+longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
+patte2SE=[patte1SE[1],np.add(patte1SE[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+
+patte1SW=[SW,np.add(SW,[-longueur1Patte*np.sin(np.pi/4),0,longueur1Patte*np.cos(np.pi/4)])]#1 pour la partie supérieur
+patte2SW=[patte1SW[1],np.add(patte1SW[1],[0,0,-longueur2Patte])]#2 pour la partie inférieur
+
+listeObjets=[[NW,NE,SE,SW],[centre],patte1NW,patte2NW,patte1NE,patte2NE,patte1SE,patte2SE,patte1SW,patte2SW]
 ObjetParNom={}
-ObjetParNom["plateforme"]=[NW,NE,SE,SW]
-ObjetParNom["centre"]=[centre]
+ObjetParNom["plateforme"]=listeObjets[0]
+ObjetParNom["centre"]=listeObjets[1]
+ObjetParNom["patte1NW"]=listeObjets[2]
+ObjetParNom["patte2NW"]=listeObjets[3]
+ObjetParNom["patte1NE"]=listeObjets[2]
+ObjetParNom["patte2NE"]=listeObjets[3]
+ObjetParNom["patte1SE"]=listeObjets[2]
+ObjetParNom["patte2SE"]=listeObjets[3]
+ObjetParNom["patte1SW"]=listeObjets[2]
+ObjetParNom["patte2SW"]=listeObjets[3]
 update(listeObjets)
 
 #------------------------------------------
