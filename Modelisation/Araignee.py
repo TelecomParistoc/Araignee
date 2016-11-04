@@ -15,7 +15,7 @@ def moveTo(vector,ObjetsABouger):
     for i in range(len(ObjetsABouger)):
         for j in range(len(ObjetsABouger[i])):
             ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
-    update(listeObjets)
+    #update(listeObjets)
     
 
 def rotation(origine,vector,w,objetsAPivoter):#w = angle de rotation, vector= vecteur directeur de l'axe de rotation
@@ -30,7 +30,7 @@ def rotation(origine,vector,w,objetsAPivoter):#w = angle de rotation, vector= ve
                 objetsAPivoter[j][k]=np.add(objetsAPivoter[j][k],np.cross(vector,objetsAPivoter[j][k]))
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
             objetsAPivoter[j][m]=objetsAPivoter[j][m]+origine
-    update(listeObjets)
+    #update(listeObjets)
 
 
 def update(listeObjets):
@@ -53,22 +53,21 @@ def normalized(vector):
     return(vector/np.linalg.norm(vector))
     
 def Time(iterations):
+    global vitesse,motSpeedList
     for i in range(iterations):
         if not contact:
-            chute()
-            
-        
-        
-        
-def chute():
-    global vitesseChute
-    vitesseChute[2]-=g*mTot*dt*100# en cm.s-1
-    moveTo(np.multiply(vitesseChute,dt),listeObjets)
-    testContact()
+            vitesse[2]-=g*dt*100# en cm.s-1
+        moveTo(np.multiply(vitesse,dt),listeObjets)
+        """"
+        for a in range(4):
+            if motSpeedList[a][1]!=0:
+                rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])"""
+        testContact()
+        update(listeObjets)
     
 
 def testContact():
-    global contactNW,contactNE,contactSE,contactSW,contact
+    global contactNW,contactNE,contactSE,contactSW,contact,vitesse
     i=0
     n=len(ObjetParNom["supportNW"])
     while i<n and not contactNW:
@@ -92,6 +91,7 @@ def testContact():
         i+=1 
     if (contactNW or contactNE or contactSE or contactSW):
         contact=True
+        vitesse[2]=0
     
     
 #--------------Initialisation---------------
@@ -103,7 +103,7 @@ longueur=20
 largeur=10
 longueur1Patte=5
 longueur2Patte=10
-centre=[0,0,10]
+centre=[0,0,30]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -133,6 +133,7 @@ for i in range(pointsParSupport):
     supportSE.append(np.add(patte2SE[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
     supportSW.append(np.add(patte2SW[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
 listeObjets=[[NW,NE,SE,SW],[centre],patte1NW,patte2NW,patte1NE,patte2NE,patte1SE,patte2SE,patte1SW,patte2SW,supportNW,supportNE,supportSE,supportSW]
+
 ObjetParNom={}
 ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
@@ -148,6 +149,13 @@ ObjetParNom["supportNW"]=listeObjets[10]
 ObjetParNom["supportNE"]=listeObjets[11]
 ObjetParNom["supportSE"]=listeObjets[12]
 ObjetParNom["supportSW"]=listeObjets[13]
+
+ObjetParNom["patte1"]=[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]]
+ObjetParNom["patte2"]=[ObjetParNom["patte1NE"],ObjetParNom["patte2NE"],ObjetParNom["supportNE"]]
+ObjetParNom["patte3"]=[ObjetParNom["patte1SE"],ObjetParNom["patte2SE"],ObjetParNom["supportSE"]]
+ObjetParNom["patte4"]=[ObjetParNom["patte1SW"],ObjetParNom["patte2SW"],ObjetParNom["supportSW"]]
+
+
 update(listeObjets)
 
 global contactNW,contactNE,contactSE,contactSW,contact
@@ -159,16 +167,24 @@ contact=False #permet de vérifier si le robot est en contact avec le sol
 
 
 
-dt=0.1#dt intervalle de temps en secondes
+dt=0.01#dt intervalle de temps en secondes
 global vitesseChute
-vitesseChute=[0,0,0]
-mTot=0.2#masse totale en kg
+vitesse=[0,0,0]
 g=9.81
+
+
+NWMotSpeed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+NEMotSpeed=[0,30]
+SEMotSpeed=[0,0]
+SWMotSpeed=[0,0]
+global motSpeedList
+motSpeedList=[NWMotSpeed,NEMotSpeed,SEMotSpeed,SWMotSpeed]
+
 Time(100)
 #------------------------------------------
 
 # tests rotation d'une patte:
-rotation(ObjetParNom["plateforme"][0],[0,0,-1],np.pi/4,[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]])
+rotation(ObjetParNom["plateforme"][0],[1,1,0],np.pi/4,[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]])
 
 
         
