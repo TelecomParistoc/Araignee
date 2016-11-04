@@ -23,8 +23,9 @@ def moveTo(vector):
     update(listeObjets)
     
 
-def rotation(origine,vector,w):#w = angle de rotation
+def rotation(origine,vector,w):#w = angle de rotation, vector= vecteur directeur de l'axe de rotation
     n=100
+    vector=normalized(vector)
     vector=np.multiply(vector,(w/n))
     for j in range(len(listeObjets)):
         for m in range(len(listeObjets[j])):#changement de référentiel
@@ -95,12 +96,12 @@ ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
 ObjetParNom["patte1NW"]=listeObjets[2]
 ObjetParNom["patte2NW"]=listeObjets[3]
-ObjetParNom["patte1NE"]=listeObjets[2]
-ObjetParNom["patte2NE"]=listeObjets[3]
-ObjetParNom["patte1SE"]=listeObjets[2]
-ObjetParNom["patte2SE"]=listeObjets[3]
-ObjetParNom["patte1SW"]=listeObjets[2]
-ObjetParNom["patte2SW"]=listeObjets[3]
+ObjetParNom["patte1NE"]=listeObjets[4]
+ObjetParNom["patte2NE"]=listeObjets[5]
+ObjetParNom["patte1SE"]=listeObjets[6]
+ObjetParNom["patte2SE"]=listeObjets[7]
+ObjetParNom["patte1SW"]=listeObjets[8]
+ObjetParNom["patte2SW"]=listeObjets[9]
 update(listeObjets)
 
 #------------------------------------------
