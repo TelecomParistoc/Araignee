@@ -18,18 +18,18 @@ def moveTo(vector,ObjetsABouger):
     #update(listeObjets)
     
 
-def rotation(origine,vector,w,objetsAPivoter):#w = angle de rotation, vector= vecteur directeur de l'axe de rotation
-    n=50
+def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    vector=np.multiply(vector,(w/n))
+    N=100#effectuer la rotation en N fois permet d'éviter la déformation des pièces à cause du calcul en temps discret mais plus long à calculer
+    vector=np.multiply(vector,w*dt/N)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
             objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
-        for i in range(n):
-            for k in range(len(objetsAPivoter[j])):
-                objetsAPivoter[j][k]=np.add(objetsAPivoter[j][k],np.cross(vector,objetsAPivoter[j][k]))
-        for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=objetsAPivoter[j][m]+origine
+        for a in range(N):
+            for n in range(len(objetsAPivoter[j])):
+                objetsAPivoter[j][n]=np.add(objetsAPivoter[j][n],np.cross(vector,objetsAPivoter[j][n]))
+        for p in range(len(objetsAPivoter[j])):#changement de référentiel
+            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
     #update(listeObjets)
 
 
@@ -58,10 +58,10 @@ def Time(iterations):
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
         moveTo(np.multiply(vitesse,dt),listeObjets)
-        """"
         for a in range(4):
             if motSpeedList[a][1]!=0:
-                rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])"""
+                print(motSpeedList[a][1])
+                rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])
         testContact()
         update(listeObjets)
     
@@ -103,7 +103,7 @@ longueur=20
 largeur=10
 longueur1Patte=5
 longueur2Patte=10
-centre=[0,0,30]
+centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -135,6 +135,7 @@ for i in range(pointsParSupport):
 listeObjets=[[NW,NE,SE,SW],[centre],patte1NW,patte2NW,patte1NE,patte2NE,patte1SE,patte2SE,patte1SW,patte2SW,supportNW,supportNE,supportSE,supportSW]
 
 ObjetParNom={}
+
 ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
 ObjetParNom["patte1NW"]=listeObjets[2]
@@ -150,10 +151,10 @@ ObjetParNom["supportNE"]=listeObjets[11]
 ObjetParNom["supportSE"]=listeObjets[12]
 ObjetParNom["supportSW"]=listeObjets[13]
 
-ObjetParNom["patte1"]=[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]]
-ObjetParNom["patte2"]=[ObjetParNom["patte1NE"],ObjetParNom["patte2NE"],ObjetParNom["supportNE"]]
-ObjetParNom["patte3"]=[ObjetParNom["patte1SE"],ObjetParNom["patte2SE"],ObjetParNom["supportSE"]]
-ObjetParNom["patte4"]=[ObjetParNom["patte1SW"],ObjetParNom["patte2SW"],ObjetParNom["supportSW"]]
+ObjetParNom["patte0"]=[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]]
+ObjetParNom["patte1"]=[ObjetParNom["patte1NE"],ObjetParNom["patte2NE"],ObjetParNom["supportNE"]]
+ObjetParNom["patte2"]=[ObjetParNom["patte1SE"],ObjetParNom["patte2SE"],ObjetParNom["supportSE"]]
+ObjetParNom["patte3"]=[ObjetParNom["patte1SW"],ObjetParNom["patte2SW"],ObjetParNom["supportSW"]]
 
 
 update(listeObjets)
@@ -174,17 +175,16 @@ g=9.81
 
 
 NWMotSpeed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-NEMotSpeed=[0,30]
+NEMotSpeed=[0,100]
 SEMotSpeed=[0,0]
 SWMotSpeed=[0,0]
 global motSpeedList
 motSpeedList=[NWMotSpeed,NEMotSpeed,SEMotSpeed,SWMotSpeed]
 
-Time(100)
+
+
 #------------------------------------------
 
-# tests rotation d'une patte:
-rotation(ObjetParNom["plateforme"][0],[1,1,0],np.pi/4,[ObjetParNom["patte1NW"],ObjetParNom["patte2NW"],ObjetParNom["supportNW"]])
 
 
         
