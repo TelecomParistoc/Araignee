@@ -16,39 +16,23 @@ def moveTo(vector,ObjetsABouger):
         for j in range(len(ObjetsABouger[i])):
             ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
     #update(listeObjets)
-    
 
-def rotation(origine,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
+def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    N=100#effectuer la rotation en N fois permet d'éviter la déformation des pièces à cau2 du calcul en temps discret mais plus long à calculer
-    vector=np.multiply(vector,w*dt/N)
+    vector=np.multiply(vector,w*dt)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
             objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
-        for a in range(N):
-            for n in range(len(objetsAPivoter[j])):
-                objetsAPivoter[j][n]=np.add(objetsAPivoter[j][n],np.cross(vector,objetsAPivoter[j][n]))
-        for p in range(len(objetsAPivoter[j])):#changement de référentiel
+        for n in range(len(objetsAPivoter[j])):#on decompose la rotation en 3 rotations
+            Rot=np.array([[1,0,0],[0,np.cos(vector[0]),np.sin(vector[0])],[0,-np.sin(vector[0]),np.cos(vector[0])]])#matrice de rotation dans le plan y,z
+            objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
+            Rot=np.array([[np.cos(vector[1]),0,-np.sin(vector[1])],[0,1,0],[np.sin(vector[1]),0,np.cos(vector[1])]])#matrice de rotation dans le plan z,x
+            objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
+            Rot=np.array([[np.cos(vector[2]),np.sin(vector[2]),0],[-np.sin(vector[2]),np.cos(vector[2]),0],[0,0,1]])#matrice de rotation dans le plan x,y
+            objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
+        for p in range(len(objetsAPivoter[j])):#changement de référentiel inverse
             objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
     #update(listeObjets)
-
-def rotation1(origine,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
-    vector = normalized(vector)
-    vector=np.multiply(vector,w)
-    for j in range(len(objetsAPivoter)):
-        for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
-        for n in range(len(objetsAPivoter[j])):
-            norme=np.linalg.norm(objetsAPivoter[j][n])
-            objetsAPivoter[j][n][1]-= norme*np.cos(vector[0])
-            objetsAPivoter[j][n][2]+=norme*np.sin(vector[0])
-            objetsAPivoter[j][n][2]-= norme*np.cos(vector[1])
-            objetsAPivoter[j][n][0]+=norme*np.sin(vector[1])
-            objetsAPivoter[j][n][0]-= norme*np.cos(vector[2])
-            objetsAPivoter[j][n][1]+=norme*np.sin(vector[2])
-        for p in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
-    update(listeObjets)
 
 
 def update(listeObjets):
@@ -122,7 +106,7 @@ longueur=20
 largeur=10
 longueurSupPatte=5
 longueurInfPatte=10
-centre=[0,0,0]
+centre=[0,0,100]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -156,6 +140,7 @@ listeObjets=[[NW,NE,SE,SW],[centre],patteSup0,patteInf0,patteSup1,patteInf1,patt
 
 ObjetParNom={}
 
+ObjetParNom["araignee"]=listeObjets
 ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
 ObjetParNom["patteSup0"]=listeObjets[2]
@@ -198,16 +183,16 @@ Mot0Speed=[0,0]# vites2 des moteurs pour mvt vertical et horizontal respectiveme
 Mot1Speed=[0,0]
 Mot2Speed=[0,0]
 Mot3Speed=[0,0]
-Mot0Angle=0
-Mot1Angle=0
-Mot2Angle=0
-Mot3Angle=0
+Mot0Angle=[0,0]
+Mot1Angle=[0,0]
+Mot2Angle=[0,0]
+Mot3Angle=[0,0]
 
 global motSpeedList,motAngleList
 motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
 motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
 
-
+Time(100)
 #------------------------------------------
 
 
