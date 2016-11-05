@@ -55,19 +55,21 @@ def normalized(vector):
     return(vector/np.linalg.norm(vector))
     
 def Time(iterations):
-    global vitesse,motSpeedList
+    global vitesse,motSpeedList,motAngleList
     for i in range(iterations):
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
         moveTo(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
             if motSpeedList[a][1]!=0:
-                rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])
+                rotation(ObjetParNom["fixationInf"+str(a)][0],[0,0,1],motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)]]+ObjetParNom["patte"+str(a)])
+                motAngleList[a][1]+=motSpeedList[a][1]*dt
             if motSpeedList[a][0]!=0:
-                vecPatteSup=np.subtract(ObjetParNom["patteSup"+str(a)][1],ObjetParNom["patteSup"+str(a)][0])
-                vecPatteInf=np.subtract(ObjetParNom["patteInf"+str(a)][1],ObjetParNom["patteInf"+str(a)][0])
+                vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
+                vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
                 vecNormal=np.cross(vecPatteInf,vecPatteSup)
-                rotation(ObjetParNom["plateforme"][a],vecNormal,motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                motAngleList[a][0]+=motSpeedList[a][0]*dt
         testContact()
         update(listeObjets)
     
@@ -105,27 +107,52 @@ fig = plt.figure()
 ax = Axes3D(fig)
 plt.ion()
 plt.show()
-longueur=20
+longueur=15
 largeur=10
 longueurSupPatte=5
 longueurInfPatte=10
+
+longueurSup1Patte=9
+longueurSup2Patte=9
+longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
+longueurInf2Patte=9
+angleInfPatte=0.157
 centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
 SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
 
-patteSup0=[NW,np.add(NW,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
-patteInf0=[patteSup0[1],np.add(patteSup0[1],[0,0,-longueurInfPatte])]
+fixationSupNW=np.add(NW,[+1,0,3])
+fixationSupNE=np.add(NE,[-1,0,3])
+fixationSupSE=np.add(SE,[-1,0,3])
+fixationSupSW=np.add(SW,[+1,0,3])
 
-patteSup1=[NE,np.add(NE,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
-patteInf1=[patteSup1[1],np.add(patteSup1[1],[0,0,-longueurInfPatte])]
+fixationInfNW=np.add(NW,[-1,0,1])
+fixationInfNE=np.add(NE,[+1,0,1])
+fixationInfSE=np.add(SE,[+1,0,1])
+fixationInfSW=np.add(SW,[-1,0,1])
 
-patteSup2=[SE,np.add(SE,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
-patteInf2=[patteSup2[1],np.add(patteSup2[1],[0,0,-longueurInfPatte])]
+patte0Sup1=[fixationSupNW,np.add(fixationSupNW,[-longueurSup1Patte,0,0])]
+patte0Sup2=[fixationInfNW,np.add(fixationInfNW,[-longueurSup2Patte,0,0])]
+patte0Inf1=[patte0Sup1[1],patte0Sup2[1]]
+patte0Inf2=[patte0Inf1[1],np.add(patte0Inf1[1],[-np.sin(angleInfPatte)*longueurInf2Patte,0,-np.cos(angleInfPatte)*longueurInf2Patte])]
 
-patteSup3=[SW,np.add(SW,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
-patteInf3=[patteSup3[1],np.add(patteSup3[1],[0,0,-longueurInfPatte])]
+
+patte1Sup1=[fixationSupNE,np.add(fixationSupNE,[+longueurSup1Patte,0,0])]
+patte1Sup2=[fixationInfNE,np.add(fixationInfNE,[+longueurSup2Patte,0,0])]
+patte1Inf1=[patte1Sup1[1],patte1Sup2[1]]
+patte1Inf2=[patte1Inf1[1],np.add(patte1Inf1[1],[+np.sin(angleInfPatte)*longueurInf2Patte,0,-np.cos(angleInfPatte)*longueurInf2Patte])]
+
+patte2Sup1=[fixationSupSE,np.add(fixationSupSE,[+longueurSup1Patte,0,0])]
+patte2Sup2=[fixationInfSE,np.add(fixationInfSE,[+longueurSup2Patte,0,0])]
+patte2Inf1=[patte2Sup1[1],patte2Sup2[1]]
+patte2Inf2=[patte2Inf1[1],np.add(patte2Inf1[1],[+np.sin(angleInfPatte)*longueurInf2Patte,0,-np.cos(angleInfPatte)*longueurInf2Patte])]
+
+patte3Sup1=[fixationSupSW,np.add(fixationSupSW,[-longueurSup1Patte,0,0])]
+patte3Sup2=[fixationInfSW,np.add(fixationInfSW,[-longueurSup2Patte,0,0])]
+patte3Inf1=[patte3Sup1[1],patte3Sup2[1]]
+patte3Inf2=[patte3Inf1[1],np.add(patte3Inf1[1],[-np.sin(angleInfPatte)*longueurInf2Patte,0,-np.cos(angleInfPatte)*longueurInf2Patte])]
 
 pointsParSupport=15
 rayonSupport=2
@@ -134,11 +161,11 @@ support1=[]
 support2=[]
 support3=[]
 for i in range(pointsParSupport):
-    support0.append(np.add(patteInf0[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    support1.append(np.add(patteInf1[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    support2.append(np.add(patteInf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-    support3.append(np.add(patteInf3[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-listeObjets=[[NW,NE,SE,SW],[centre],patteSup0,patteInf0,patteSup1,patteInf1,patteSup2,patteInf2,patteSup3,patteInf3,support0,support1,support2,support3]
+    support0.append(np.add(patte0Inf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support1.append(np.add(patte1Inf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support2.append(np.add(patte2Inf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+    support3.append(np.add(patte3Inf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
+listeObjets=[[NW,NE,SE,SW],[centre],patte0Sup1,patte0Sup2,patte0Inf1,patte0Inf2,patte1Sup1,patte1Sup2,patte1Inf1,patte1Inf2,patte2Sup1,patte2Sup2,patte2Inf1,patte2Inf2,patte3Sup1,patte3Sup2,patte3Inf1,patte3Inf2,support0,support1,support2,support3,[fixationInfNW],[fixationInfNE],[fixationInfSE],[fixationInfSW],[fixationSupNW],[fixationSupNE],[fixationSupSE],[fixationSupSW]]
 
 
 ObjetParNom={}
@@ -146,23 +173,41 @@ ObjetParNom={}
 ObjetParNom["araignee"]=listeObjets
 ObjetParNom["plateforme"]=listeObjets[0]
 ObjetParNom["centre"]=listeObjets[1]
-ObjetParNom["patteSup0"]=listeObjets[2]
-ObjetParNom["patteInf0"]=listeObjets[3]
-ObjetParNom["patteSup1"]=listeObjets[4]
-ObjetParNom["patteInf1"]=listeObjets[5]
-ObjetParNom["patteSup2"]=listeObjets[6]
-ObjetParNom["patteInf2"]=listeObjets[7]
-ObjetParNom["patteSup3"]=listeObjets[8]
-ObjetParNom["patteInf3"]=listeObjets[9]
-ObjetParNom["support0"]=listeObjets[10]
-ObjetParNom["support1"]=listeObjets[11]
-ObjetParNom["support2"]=listeObjets[12]
-ObjetParNom["support3"]=listeObjets[13]
+ObjetParNom["patte0Sup1"]=listeObjets[2]
+ObjetParNom["patte0Sup2"]=listeObjets[3]
+ObjetParNom["patte0Inf1"]=listeObjets[4]
+ObjetParNom["patte0Inf2"]=listeObjets[5]
+ObjetParNom["patte1Sup1"]=listeObjets[6]
+ObjetParNom["patte1Sup2"]=listeObjets[7]
+ObjetParNom["patte1Inf1"]=listeObjets[8]
+ObjetParNom["patte1Inf2"]=listeObjets[9]
+ObjetParNom["patte2Sup1"]=listeObjets[10]
+ObjetParNom["patte2Sup2"]=listeObjets[11]
+ObjetParNom["patte2Inf1"]=listeObjets[12]
+ObjetParNom["patte2Inf2"]=listeObjets[13]
+ObjetParNom["patte3Sup1"]=listeObjets[14]
+ObjetParNom["patte3Sup2"]=listeObjets[15]
+ObjetParNom["patte3Inf1"]=listeObjets[16]
+ObjetParNom["patte3Inf2"]=listeObjets[17]
+ObjetParNom["support0"]=listeObjets[18]
+ObjetParNom["support1"]=listeObjets[19]
+ObjetParNom["support2"]=listeObjets[20]
+ObjetParNom["support3"]=listeObjets[21]
+ObjetParNom["fixationInf0"]=listeObjets[22]
+ObjetParNom["fixationInf1"]=listeObjets[23]
+ObjetParNom["fixationInf2"]=listeObjets[24]
+ObjetParNom["fixationInf3"]=listeObjets[25]
+ObjetParNom["fixationSup0"]=listeObjets[26]
+ObjetParNom["fixationSup1"]=listeObjets[27]
+ObjetParNom["fixationSup2"]=listeObjets[28]
+ObjetParNom["fixationSup3"]=listeObjets[29]
 
-ObjetParNom["patte0"]=[ObjetParNom["patteSup0"],ObjetParNom["patteInf0"],ObjetParNom["support0"]]
-ObjetParNom["patte1"]=[ObjetParNom["patteSup1"],ObjetParNom["patteInf1"],ObjetParNom["support1"]]
-ObjetParNom["patte2"]=[ObjetParNom["patteSup2"],ObjetParNom["patteInf2"],ObjetParNom["support2"]]
-ObjetParNom["patte3"]=[ObjetParNom["patteSup3"],ObjetParNom["patteInf3"],ObjetParNom["support3"]]
+
+
+ObjetParNom["patte0"]=[ObjetParNom["patte0Sup1"],ObjetParNom["patte0Sup2"],ObjetParNom["patte0Inf1"],ObjetParNom["patte0Inf2"],ObjetParNom["support0"]]
+ObjetParNom["patte1"]=[ObjetParNom["patte1Sup1"],ObjetParNom["patte1Sup2"],ObjetParNom["patte1Inf1"],ObjetParNom["patte1Inf2"],ObjetParNom["support1"]]
+ObjetParNom["patte2"]=[ObjetParNom["patte2Sup1"],ObjetParNom["patte2Sup2"],ObjetParNom["patte2Inf1"],ObjetParNom["patte2Inf2"],ObjetParNom["support2"]]
+ObjetParNom["patte3"]=[ObjetParNom["patte3Sup1"],ObjetParNom["patte3Sup2"],ObjetParNom["patte3Inf1"],ObjetParNom["patte3Inf2"],ObjetParNom["support3"]]
 
 
 update(listeObjets)
@@ -182,10 +227,11 @@ vitesse=[0,0,0]
 g=9.81
 
 
-Mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-Mot1Speed=[0,30]
+Mot0Speed=[30,30]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+Mot1Speed=[0,0]
 Mot2Speed=[0,0]
 Mot3Speed=[0,0]
+
 Mot0Angle=[0,0]
 Mot1Angle=[0,0]
 Mot2Angle=[0,0]
@@ -195,7 +241,6 @@ global motSpeedList,motAngleList
 motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
 motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
 
-Time(100)
 #------------------------------------------
 
 
