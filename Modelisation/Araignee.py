@@ -18,19 +18,37 @@ def moveTo(vector,ObjetsABouger):
     #update(listeObjets)
     
 
-def rotation(origi1,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
+def rotation(origine,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
     N=100#effectuer la rotation en N fois permet d'éviter la déformation des pièces à cau2 du calcul en temps discret mais plus long à calculer
     vector=np.multiply(vector,w*dt/N)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origi1)
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
         for a in range(N):
             for n in range(len(objetsAPivoter[j])):
                 objetsAPivoter[j][n]=np.add(objetsAPivoter[j][n],np.cross(vector,objetsAPivoter[j][n]))
         for p in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origi1
+            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
     #update(listeObjets)
+
+def rotation1(origine,vector,w,objetsAPivoter):#w = vites2 de rotation, vector= vecteur directeur de l'axe de rotation
+    vector = normalized(vector)
+    vector=np.multiply(vector,w)
+    for j in range(len(objetsAPivoter)):
+        for m in range(len(objetsAPivoter[j])):#changement de référentiel
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
+        for n in range(len(objetsAPivoter[j])):
+            norme=np.linalg.norm(objetsAPivoter[j][n])
+            objetsAPivoter[j][n][1]-= norme*np.cos(vector[0])
+            objetsAPivoter[j][n][2]+=norme*np.sin(vector[0])
+            objetsAPivoter[j][n][2]-= norme*np.cos(vector[1])
+            objetsAPivoter[j][n][0]+=norme*np.sin(vector[1])
+            objetsAPivoter[j][n][0]-= norme*np.cos(vector[2])
+            objetsAPivoter[j][n][1]+=norme*np.sin(vector[2])
+        for p in range(len(objetsAPivoter[j])):#changement de référentiel
+            objetsAPivoter[j][p]=objetsAPivoter[j][p]+origine
+    update(listeObjets)
 
 
 def update(listeObjets):
@@ -104,7 +122,7 @@ longueur=20
 largeur=10
 longueurSupPatte=5
 longueurInfPatte=10
-centre=[0,0,100]
+centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -188,6 +206,8 @@ Mot3Angle=0
 global motSpeedList,motAngleList
 motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
 motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
+
+
 #------------------------------------------
 
 
