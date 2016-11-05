@@ -47,17 +47,17 @@ def update(listeObjets):
     ax.set_xlim3d(-100,100)
     ax.set_ylim3d(-100,100)
     ax.set_zlim3d(-100,100)
-    plt.pau2(0.00000001)
+    plt.pause(0.00000001)
     
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
     
 def Time(iterations):
-    global vites2,motSpeedList
+    global vitesse,motSpeedList
     for i in range(iterations):
         if not contact:
-            vites2[2]-=g*dt*100# en cm.s-1
-        moveTo(np.multiply(vites2,dt),listeObjets)
+            vitesse[2]-=g*dt*100# en cm.s-1
+        moveTo(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
             if motSpeedList[a][1]!=0:
                 rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])
@@ -92,7 +92,7 @@ def testContact():
         i+=1 
     if (contact0 or contact1 or contact2 or contact3):
         contact=True
-        vites2[2]=0
+        vitesse[2]=0
     
     
 #--------------Initialisation---------------
@@ -104,22 +104,22 @@ longueur=20
 largeur=10
 longueurSupPatte=5
 longueurInfPatte=10
-centre=[0,0,0]
+centre=[0,0,100]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
 SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
 
-patteSup0=[0,np.add(0,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteSup0=[NW,np.add(NW,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
 patteInf0=[patteSup0[1],np.add(patteSup0[1],[0,0,-longueurInfPatte])]
 
-patteSup1=[1,np.add(1,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteSup1=[NE,np.add(NE,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
 patteInf1=[patteSup1[1],np.add(patteSup1[1],[0,0,-longueurInfPatte])]
 
-patteSup2=[2,np.add(2,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteSup2=[SE,np.add(SE,[+longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
 patteInf2=[patteSup2[1],np.add(patteSup2[1],[0,0,-longueurInfPatte])]
 
-patteSup3=[3,np.add(3,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
+patteSup3=[SW,np.add(SW,[-longueurSupPatte*np.sin(np.pi/4),0,longueurSupPatte*np.cos(np.pi/4)])]
 patteInf3=[patteSup3[1],np.add(patteSup3[1],[0,0,-longueurInfPatte])]
 
 pointsParSupport=15
@@ -133,7 +133,8 @@ for i in range(pointsParSupport):
     support1.append(np.add(patteInf1[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
     support2.append(np.add(patteInf2[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
     support3.append(np.add(patteInf3[1],[rayonSupport*np.cos(np.pi*2*i/pointsParSupport),rayonSupport*np.sin(np.pi*2*i/pointsParSupport),0]))
-listeObjets=[[0,1,2,3],[centre],patteSup0,patteInf0,patteSup1,patteInf1,patteSup2,patteInf2,patteSup3,patteInf3,support0,support1,support2,support3]
+listeObjets=[[NW,NE,SE,SW],[centre],patteSup0,patteInf0,patteSup1,patteInf1,patteSup2,patteInf2,patteSup3,patteInf3,support0,support1,support2,support3]
+
 
 ObjetParNom={}
 
@@ -171,7 +172,7 @@ contact=False #permet de vérifier si le robot est en contact avec le sol
 
 dt=0.01#dt intervalle de temps en 2condes
 global vites2Chute
-vites2=[0,0,0]
+vitesse=[0,0,0]
 g=9.81
 
 
