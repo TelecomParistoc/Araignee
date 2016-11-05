@@ -63,8 +63,11 @@ def Time(iterations):
         for a in range(4):
             if motSpeedList[a][1]!=0:
                 rotation(ObjetParNom["plateforme"][a],[0,0,1],motSpeedList[a][1],ObjetParNom["patte"+str(a)])
-            #if motSpeedList[a][0]!=0:
-                #vecPatte1=ObjetParNom["Patte"]
+            if motSpeedList[a][0]!=0:
+                vecPatteSup=np.subtract(ObjetParNom["patteSup"+str(a)][1],ObjetParNom["patteSup"+str(a)][0])
+                vecPatteInf=np.subtract(ObjetParNom["patteInf"+str(a)][1],ObjetParNom["patteInf"+str(a)][0])
+                vecNormal=np.cross(vecPatteInf,vecPatteSup)
+                rotation(ObjetParNom["plateforme"][a],vecNormal,motSpeedList[a][0],ObjetParNom["patte"+str(a)])
         testContact()
         update(listeObjets)
     
@@ -106,7 +109,7 @@ longueur=20
 largeur=10
 longueurSupPatte=5
 longueurInfPatte=10
-centre=[0,0,100]
+centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -173,14 +176,14 @@ contact=False #permet de vérifier si le robot est en contact avec le sol
 
 
 
-dt=0.01#dt intervalle de temps en 2condes
+dt=0.01#dt intervalle de temps en secondes
 global vites2Chute
 vitesse=[0,0,0]
 g=9.81
 
 
-Mot0Speed=[0,0]# vites2 des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-Mot1Speed=[0,0]
+Mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+Mot1Speed=[0,30]
 Mot2Speed=[0,0]
 Mot3Speed=[0,0]
 Mot0Angle=[0,0]
