@@ -139,7 +139,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,0]
+centre=[0,0,100]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -244,9 +244,10 @@ contact=False #permet de vérifier si le robot est en contact avec le sol
 
 
 dt=0.01#dt intervalle de temps en secondes
-global vites2Chute
+global vitesse
 vitesse=[0,0,0]
 g=9.81
+
 
 
 mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
@@ -264,6 +265,7 @@ global motSpeedList,motAngleList,motAngleLim
 motAngleLim=[[3.14/2,-3.14/4],[3.14/4,-3.14/2]]#[[max,min],[max,min]] 
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
+
 
 Time(100)
 
