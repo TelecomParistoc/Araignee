@@ -139,7 +139,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,100]
+centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -250,10 +250,10 @@ g=9.81
 
 
 
-mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[30,0]
-mot2Speed=[0,30]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[0,30]
+mot0Speed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[0,0]
+mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[0,0]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -267,7 +267,7 @@ motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
 
-Time(100)
+
 
 #------------------------------------------
 
