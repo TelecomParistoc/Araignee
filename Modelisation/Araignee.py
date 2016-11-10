@@ -61,15 +61,30 @@ def Time(iterations):
             vitesse[2]-=g*dt*100# en cm.s-1
         move(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
-            if motSpeedList[a][1]!=0:
-                rotation(ObjetParNom["fixationInf"+str(a)][0],[0,0,1],motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)]]+ObjetParNom["patte"+str(a)])
-                motAngleList[a][1]+=motSpeedList[a][1]*dt
-            if motSpeedList[a][0]!=0:
-                vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
-                vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
-                vecNormal=np.cross(vecPatteInf,vecPatteSup)
-                rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,motSpeedList[a][0],ObjetParNom["patte"+str(a)])
-                motAngleList[a][0]+=motSpeedList[a][0]*dt
+            if a==0 or a==3:
+                if motSpeedList[a][1]!=0:
+                    rotation(ObjetParNom["fixationInf"+str(a)][0],[0,0,1],motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)]]+ObjetParNom["patte"+str(a)])
+                    motAngleList[a][1]+=motSpeedList[a][1]*dt
+                    testPosMot(a,1)
+                if motSpeedList[a][0]!=0:
+                    vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
+                    vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
+                    vecNormal=np.cross(vecPatteInf,vecPatteSup)
+                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                    motAngleList[a][0]+=motSpeedList[a][0]*dt
+                    testPosMot(a,0)
+            else:
+                if motSpeedList[a][1]!=0:
+                    rotation(ObjetParNom["fixationInf"+str(a)][0],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)]]+ObjetParNom["patte"+str(a)])
+                    motAngleList[a][1]+=motSpeedList[a][1]*dt
+                    testPosMot(a,1)
+                if motSpeedList[a][0]!=0:
+                    vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
+                    vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
+                    vecNormal=np.cross(vecPatteInf,vecPatteSup)
+                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                    motAngleList[a][0]+=motSpeedList[a][0]*dt
+                    testPosMot(a,0)
         testContact()
         update(listeObjets)
     
@@ -100,6 +115,13 @@ def testContact():
     if (contact0 or contact1 or contact2 or contact3):
         contact=True
         vitesse[2]=0
+
+def testPosMot(a,i):
+    global motAngleList,motAngleLim
+    if motAngleList[a][i]>=motAngleLim[i][0] or motAngleList[a][i]<=motAngleLim[i][1]:
+        motSpeedList[a][i]*=-1
+    
+    
     
     
 #--------------Initialisation---------------
@@ -227,21 +249,23 @@ vitesse=[0,0,0]
 g=9.81
 
 
-Mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-Mot1Speed=[30,0]
-Mot2Speed=[30,0]
-Mot3Speed=[30,0]
+mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[30,0]
+mot2Speed=[0,30]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[0,30]
 
-Mot0Angle=[0,0]
-Mot1Angle=[0,0]
-Mot2Angle=[0,0]
-Mot3Angle=[0,0]
-
-global motSpeedList,motAngleList
-motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
-motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
+mot0Angle=[0,0]
+mot1Angle=[0,0]
+mot2Angle=[0,0]
+mot3Angle=[0,0]
 
 
+global motSpeedList,motAngleList,motAngleLim
+motAngleLim=[[3.14/2,-3.14/4],[3.14/4,-3.14/2]]#[[max,min],[max,min]] 
+motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
+motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
+
+Time(100)
 
 #------------------------------------------
 
