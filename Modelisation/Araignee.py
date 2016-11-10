@@ -121,8 +121,8 @@ def testPosMot(a,i):
     if motAngleList[a][i]>=motAngleLim[i][0] or motAngleList[a][i]<=motAngleLim[i][1]:
         motSpeedList[a][i]*=-1
     
-    
-    
+
+    # commentaire bidon
     
 #--------------Initialisation---------------
 fig = plt.figure()
