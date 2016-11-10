@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
 
-def moveTo(vector,ObjetsABouger):
+def move(vector,ObjetsABouger):
     for i in range(len(ObjetsABouger)):
         for j in range(len(ObjetsABouger[i])):
             ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
@@ -59,7 +59,7 @@ def Time(iterations):
     for i in range(iterations):
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
-        moveTo(np.multiply(vitesse,dt),listeObjets)
+        move(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
             if motSpeedList[a][1]!=0:
                 rotation(ObjetParNom["fixationInf"+str(a)][0],[0,0,1],motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -227,10 +227,10 @@ vitesse=[0,0,0]
 g=9.81
 
 
-Mot0Speed=[30,30]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-Mot1Speed=[0,0]
-Mot2Speed=[0,0]
-Mot3Speed=[0,0]
+Mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+Mot1Speed=[30,0]
+Mot2Speed=[30,0]
+Mot3Speed=[30,0]
 
 Mot0Angle=[0,0]
 Mot1Angle=[0,0]
@@ -240,6 +240,8 @@ Mot3Angle=[0,0]
 global motSpeedList,motAngleList
 motSpeedList=[Mot0Speed,Mot1Speed,Mot2Speed,Mot3Speed]
 motAngleList=[Mot0Angle,Mot1Angle,Mot2Angle,Mot3Angle]
+
+
 
 #------------------------------------------
 
