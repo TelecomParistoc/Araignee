@@ -11,22 +11,24 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
 
-def move(vector,ObjetsABouger):
+
+def move(vector, ObjetsABouger):
     for i in range(len(ObjetsABouger)):
         for j in range(len(ObjetsABouger[i])):
-            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
-    #update(listeObjets)
+            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j], vector)
+    # update(listeObjets)
 
-def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
+
+def rotation(origine, vector, w, objetsAPivoter): # w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    vector=np.multiply(vector,w*dt)
+    vector=np.multiply(vector, w*dt)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m], origine)
         for n in range(len(objetsAPivoter[j])):#on decompose la rotation en 3 rotations
-            Rot=np.array([[1,0,0],[0,np.cos(vector[0]),np.sin(vector[0])],[0,-np.sin(vector[0]),np.cos(vector[0])]])#matrice de rotation dans le plan y,z
+            Rot=np.array([[1,0,0], [0,np.cos(vector[0]),np.sin(vector[0])], [0,-np.sin(vector[0]),np.cos(vector[0])]]) # matrice de rotation dans le plan y,z
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
-            Rot=np.array([[np.cos(vector[1]),0,-np.sin(vector[1])],[0,1,0],[np.sin(vector[1]),0,np.cos(vector[1])]])#matrice de rotation dans le plan z,x
+            Rot=np.array([[np.cos(vector[1]), 0, -np.sin(vector[1])],[0,1,0], [np.sin(vector[1]), 0, np.cos(vector[1])]]) # matrice de rotation dans le plan z,x
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
             Rot=np.array([[np.cos(vector[2]),np.sin(vector[2]),0],[-np.sin(vector[2]),np.cos(vector[2]),0],[0,0,1]])#matrice de rotation dans le plan x,y
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
@@ -50,10 +52,12 @@ def update(listeObjets):
     ax.set_ylim3d(-100,100)
     ax.set_zlim3d(-100,100)
     plt.pause(0.00000001)
-    
+
+
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
-    
+
+
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList
     for i in range(iterations):
@@ -116,13 +120,81 @@ def testContact():
         contact=True
         vitesse[2]=0
 
+
 def testPosMot(a,i):
     global motAngleList,motAngleLim
     if motAngleList[a][i]>=motAngleLim[i][0] or motAngleList[a][i]<=motAngleLim[i][1]:
         motSpeedList[a][i]*=-1
     
+#TODO faire une fonction qui donne les couples des moteurs en fonction des vitesses
+# à déterminer par une modélisation empirique
 
-    # commentaire bidon
+def distancePointPoint(A, B):
+    return np.linalg.norm([B[i]-A[i] for i in range(3)])
+
+
+def distanceDroitePoint(point, droite):
+    """fonction qui renvoie la distance entre un point et une droite en fonction des coordonnées
+    du point et des points définissant la droite
+    droite : liste de deux points"""
+    vecBA = [point[i]-droite[0][i] for i in range(3)]
+    vecDir = [droite[1][i]-droite[0][i] for i in range(3)]
+    prodVec = [vecBA[(i+1)%3]*vecDir[(i+2)%3]-vecBA[(i+2)%3]*vecDir[(i+1)%3] for i in range(3)]
+    return np.linalg.norm(prodVec)/np.linalg.norm(vecDir)
+
+
+def projeteOrtho(point, droite):
+    """fonction qui renvoie les coordonnées du projeté orthogonal d'un point sur une droite
+    droite : liste de deux points"""
+    vecDir = [droite[1][i] - droite[0][i] for i in range(3)]
+    d = -sum([vecDir[i]*point[i] for i in range(3)])
+    a, b, c = vecDir[0], vecDir[1], vecDir[2]
+    x, y, z = droite[0][0], droite[0][1], droite[0][2]
+    t = -(a*x + b*y + c*z + d)/(a**2 + b**2 + c**2)
+    return [a*t+x, b*t+y, c*t+z]
+
+
+def momentCinetique(droite):
+    """fonction qui renvoie le moment cinétique du robot """
+
+
+def reactionsNormales(centreGravite, couplesVert):
+    """fonction qui renvoie les vecteurs correspondant aux réactions normales du support
+    pour chaque pied de l'araignée
+    couplesVert : liste des couples des moteurs dont la rotation est verticale"""
+
+    listeReactions = [0, 0, 0, 0]
+
+    # on établit la liste des points en contact avec le sol
+    listePointContact = []
+    listeRefContact = [] # liste des numéros des pattes impliquées
+    if contact0:
+        listePointContact.append(ObjetParNom["patte0Inf2"][0])
+        listeRefContact.append(0)
+    if contact1:
+        listePointContact.append(ObjetParNom["patte1Inf2"][0])
+        listeRefContact.append(1)
+    if contact2:
+        listePointContact.append(ObjetParNom["patte2Inf2"][0])
+        listeRefContact.append(2)
+    if contact3:
+        listePointContact.append(ObjetParNom["patte3Inf2"][0])
+        listeRefContact.append(3)
+
+    # s'il y a deux points de contact
+    if len(listePointContact) == 2:
+        projG = projeteOrtho(centreGravite, [listePointContact[0],listePointContact[1]])
+        #TODO fonction qui renvoie le moment cinétique autour d'un axe donné
+        # pour l'instant on part du principe qu'il est nul (a priori il l'est)
+        i, j = listeRefContact[0], listeRefContact[1]
+        Li, Lj = distancePointPoint(projG, listePointContact[0]), distancePointPoint(projG, listePointContact[1])
+        listeReactions[i], listeReactions[j] = poids*(Lj/(Lj+Li)), poids*(Li/(Lj+Li))
+        #TODO ajouter l'impact des couples moteurs
+
+    #TODO cas à trois points de contacts et à quatres
+
+    return listeReactions
+
     
 #--------------Initialisation---------------
 fig = plt.figure()
