@@ -128,7 +128,39 @@ def testPosMot(a,i):
     if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
         
-    
+
+def momentInertie(listePoints,origine,vector):#listePoints : liste de [coordonnées,masse]
+    J=0
+    #for point in listePoints:
+        #J+=point[1]*(distanceDroitePoint(point[0],origine,vector))**2
+    #return (J)
+
+def pointInTriangle(triangle,point):# see ray casting algorithm
+    vecTest=[0,1]#direction choisie arbitrairement
+    count=0
+    listeVecteurs=[[triangle[0],triangle[1]],[triangle[1],triangle[2]],[triangle[2],triangle[0]]]
+    for vecteur in listeVecteurs :
+        if vecteur[1][1]>vecteur[0][1]:
+            A=[vecteur[0][0],vecteur[0][1]]
+            B=[vecteur[1][0],vecteur[1][1]]
+        else:
+            A=[vecteur[1][0],vecteur[1][1]]
+            B=[vecteur[0][0],vecteur[0][1]]
+        if max(vecteur[0][0],vecteur[1][0])>point[0] and min(vecteur[0][0],vecteur[1][0])<point[0]:
+            if A[1]>point[1] :
+                count+=1
+            if B[1]>point[1] :
+                if A[0]!=B[0]:
+                    pente1=abs((B[1]-A[1])/(B[0]-A[0]))
+                    pente2=abs((point[1]-A[1])/(point[0]-A[0]))
+                    if pente2<pente1 :
+                        count+=1
+    if count%2==1:
+        return True
+    else :
+        return False
+                
+            
 #--------------Initialisation---------------
 fig = plt.figure()
 ax = Axes3D(fig)
@@ -275,7 +307,7 @@ motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
 
-Time(150)
+#Time(150)
 
 #------------------------------------------
 
