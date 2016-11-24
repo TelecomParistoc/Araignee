@@ -10,7 +10,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
-from geometry import*
+from geometrie import*
 
 def move(vector, ObjetsABouger):
     for i in range(len(ObjetsABouger)):
