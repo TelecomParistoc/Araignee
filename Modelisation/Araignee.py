@@ -10,23 +10,26 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
+from geometrie import*
+from physique import*
 
-def move(vector,ObjetsABouger):
+def move(vector, ObjetsABouger):
     for i in range(len(ObjetsABouger)):
         for j in range(len(ObjetsABouger[i])):
-            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
-    #update(listeObjets)
+            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j], vector)
+    # update(listeObjets)
 
-def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
+
+def rotation(origine, vector, w, objetsAPivoter): # w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    vector=np.multiply(vector,w*dt)
+    vector=np.multiply(vector, w*dt)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m], origine)
         for n in range(len(objetsAPivoter[j])):#on decompose la rotation en 3 rotations
-            Rot=np.array([[1,0,0],[0,np.cos(vector[0]),np.sin(vector[0])],[0,-np.sin(vector[0]),np.cos(vector[0])]])#matrice de rotation dans le plan y,z
+            Rot=np.array([[1,0,0], [0,np.cos(vector[0]),np.sin(vector[0])], [0,-np.sin(vector[0]),np.cos(vector[0])]]) # matrice de rotation dans le plan y,z
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
-            Rot=np.array([[np.cos(vector[1]),0,-np.sin(vector[1])],[0,1,0],[np.sin(vector[1]),0,np.cos(vector[1])]])#matrice de rotation dans le plan z,x
+            Rot=np.array([[np.cos(vector[1]), 0, -np.sin(vector[1])],[0,1,0], [np.sin(vector[1]), 0, np.cos(vector[1])]]) # matrice de rotation dans le plan z,x
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
             Rot=np.array([[np.cos(vector[2]),np.sin(vector[2]),0],[-np.sin(vector[2]),np.cos(vector[2]),0],[0,0,1]])#matrice de rotation dans le plan x,y
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
@@ -46,14 +49,15 @@ def update(listeObjets):
     
         ax.add_collection3d(Poly3DCollection([zip(Coord[0],Coord[1],Coord[2])]))
     ax.autoscale_view(True,True,True,True)
-    ax.set_xlim3d(-100,100)
-    ax.set_ylim3d(-100,100)
-    ax.set_zlim3d(-100,100)
+    ax.set_xlim3d(-axlim,axlim)
+    ax.set_ylim3d(-axlim,axlim)
+    ax.set_zlim3d(-axlim,axlim)
     plt.pause(0.00000001)
-    
+
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
-    
+
+
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList
     for i in range(iterations):
@@ -67,10 +71,13 @@ def Time(iterations):
                     motAngleList[a][1]+=motSpeedList[a][1]*dt
                     testPosMot(a,1)
                 if motSpeedList[a][0]!=0:
-                    vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
                     vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
-                    vecNormal=np.cross(vecPatteInf,vecPatteSup)
-                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                    vecNormal=np.cross(vecPatteInf,[0,0,1])
+                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],[ObjetParNom["patte"+str(a)+"Sup1"]])
+                    rotation(ObjetParNom["fixationInf"+str(a)][0],vecNormal,-motSpeedList[a][0],[ObjetParNom["patte"+str(a)+"Sup2"]])
+                    ObjetParNom["patte"+str(a)+"Inf1"][0]=ObjetParNom["patte"+str(a)+"Sup1"][1]
+                    ObjetParNom["patte"+str(a)+"Inf1"][1]=ObjetParNom["patte"+str(a)+"Sup2"][1]
+                    move(np.subtract(ObjetParNom["patte"+str(a)+"Sup2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0]),[ObjetParNom["patte"+str(a)+"Inf2"],ObjetParNom["support"+str(a)]])
                     motAngleList[a][0]+=motSpeedList[a][0]*dt
                     testPosMot(a,0)
             else:
@@ -79,10 +86,13 @@ def Time(iterations):
                     motAngleList[a][1]+=motSpeedList[a][1]*dt
                     testPosMot(a,1)
                 if motSpeedList[a][0]!=0:
-                    vecPatteSup=np.subtract(ObjetParNom["patte"+str(a)+"Sup1"][1],ObjetParNom["patte"+str(a)+"Sup1"][0])
                     vecPatteInf=np.subtract(ObjetParNom["patte"+str(a)+"Inf2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0])
-                    vecNormal=np.cross(vecPatteInf,vecPatteSup)
-                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],ObjetParNom["patte"+str(a)])
+                    vecNormal=np.cross(vecPatteInf,[0,0,1])
+                    rotation(ObjetParNom["fixationSup"+str(a)][0],vecNormal,-motSpeedList[a][0],[ObjetParNom["patte"+str(a)+"Sup1"]])
+                    rotation(ObjetParNom["fixationInf"+str(a)][0],vecNormal,-motSpeedList[a][0],[ObjetParNom["patte"+str(a)+"Sup2"]])
+                    ObjetParNom["patte"+str(a)+"Inf1"][0]=ObjetParNom["patte"+str(a)+"Sup1"][1]
+                    ObjetParNom["patte"+str(a)+"Inf1"][1]=ObjetParNom["patte"+str(a)+"Sup2"][1]
+                    move(np.subtract(ObjetParNom["patte"+str(a)+"Sup2"][1],ObjetParNom["patte"+str(a)+"Inf2"][0]),[ObjetParNom["patte"+str(a)+"Inf2"],ObjetParNom["support"+str(a)]])
                     motAngleList[a][0]+=motSpeedList[a][0]*dt
                     testPosMot(a,0)
         testContact()
@@ -116,19 +126,23 @@ def testContact():
         contact=True
         vitesse[2]=0
 
+
 def testPosMot(a,i):
     global motAngleList,motAngleLim
-    if motAngleList[a][i]>=motAngleLim[i][0] or motAngleList[a][i]<=motAngleLim[i][1]:
+    if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
-    
-    
-    
-    
+
+        
+
+
 #--------------Initialisation---------------
 fig = plt.figure()
 ax = Axes3D(fig)
 plt.ion()
 plt.show()
+
+axlim=100
+
 longueur=15
 largeur=10
 longueurSupPatte=5
@@ -139,21 +153,21 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,100]
+centre=[0,0,0]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
 SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
 
-fixationSupNW=np.add(NW,[+1,0,3])
-fixationSupNE=np.add(NE,[-1,0,3])
-fixationSupSE=np.add(SE,[-1,0,3])
-fixationSupSW=np.add(SW,[+1,0,3])
+fixationSupNW=np.add(NW,[+1/2,0,3])
+fixationSupNE=np.add(NE,[-1/2,0,3])
+fixationSupSE=np.add(SE,[-1/2,0,3])
+fixationSupSW=np.add(SW,[+1/2,0,3])
 
-fixationInfNW=np.add(NW,[-1,0,1])
-fixationInfNE=np.add(NE,[+1,0,1])
-fixationInfSE=np.add(SE,[+1,0,1])
-fixationInfSW=np.add(SW,[-1,0,1])
+fixationInfNW=np.add(NW,[-1/2,0,1])
+fixationInfNE=np.add(NE,[+1/2,0,1])
+fixationInfSE=np.add(SE,[+1/2,0,1])
+fixationInfSW=np.add(SW,[-1/2,0,1])
 
 patte0Sup1=[fixationSupNW,np.add(fixationSupNW,[-longueurSup1Patte,0,0])]
 patte0Sup2=[fixationInfNW,np.add(fixationInfNW,[-longueurSup2Patte,0,0])]
@@ -250,10 +264,10 @@ g=9.81
 
 
 
-mot0Speed=[30,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[30,0]
-mot2Speed=[0,30]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[0,30]
+mot0Speed=[-30,30]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[-30,30]
+mot2Speed=[-30,30]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[-30,30]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -262,12 +276,12 @@ mot3Angle=[0,0]
 
 
 global motSpeedList,motAngleList,motAngleLim
-motAngleLim=[[3.14/2,-3.14/4],[3.14/4,-3.14/2]]#[[max,min],[max,min]] 
+motAngleLim=[[3.14/2,-3.14/4],[3.14/3,-3.14/3]]#[[max,min],[max,min]] 
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
 
-Time(100)
+Time(150)
 
 #------------------------------------------
 
