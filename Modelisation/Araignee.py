@@ -10,23 +10,26 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
+from geometrie import*
+from physique import*
 
-def move(vector,ObjetsABouger):
+def move(vector, ObjetsABouger):
     for i in range(len(ObjetsABouger)):
         for j in range(len(ObjetsABouger[i])):
-            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j],vector)
-    #update(listeObjets)
+            ObjetsABouger[i][j]=np.add(ObjetsABouger[i][j], vector)
+    # update(listeObjets)
 
-def rotation(origine,vector,w,objetsAPivoter):#w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
+
+def rotation(origine, vector, w, objetsAPivoter): # w = vitesse de rotation, vector= vecteur directeur de l'axe de rotation
     vector = normalized(vector)
-    vector=np.multiply(vector,w*dt)
+    vector=np.multiply(vector, w*dt)
     for j in range(len(objetsAPivoter)):
         for m in range(len(objetsAPivoter[j])):#changement de référentiel
-            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m],origine)
+            objetsAPivoter[j][m]=np.subtract(objetsAPivoter[j][m], origine)
         for n in range(len(objetsAPivoter[j])):#on decompose la rotation en 3 rotations
-            Rot=np.array([[1,0,0],[0,np.cos(vector[0]),np.sin(vector[0])],[0,-np.sin(vector[0]),np.cos(vector[0])]])#matrice de rotation dans le plan y,z
+            Rot=np.array([[1,0,0], [0,np.cos(vector[0]),np.sin(vector[0])], [0,-np.sin(vector[0]),np.cos(vector[0])]]) # matrice de rotation dans le plan y,z
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
-            Rot=np.array([[np.cos(vector[1]),0,-np.sin(vector[1])],[0,1,0],[np.sin(vector[1]),0,np.cos(vector[1])]])#matrice de rotation dans le plan z,x
+            Rot=np.array([[np.cos(vector[1]), 0, -np.sin(vector[1])],[0,1,0], [np.sin(vector[1]), 0, np.cos(vector[1])]]) # matrice de rotation dans le plan z,x
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
             Rot=np.array([[np.cos(vector[2]),np.sin(vector[2]),0],[-np.sin(vector[2]),np.cos(vector[2]),0],[0,0,1]])#matrice de rotation dans le plan x,y
             objetsAPivoter[j][n]=np.dot(Rot,objetsAPivoter[j][n])
@@ -50,11 +53,17 @@ def update(listeObjets):
     ax.set_ylim3d(-axlim,axlim)
     ax.set_zlim3d(-axlim,axlim)
     plt.pause(0.00000001)
+<<<<<<< HEAD
     
     
+=======
+
+
+>>>>>>> origin/test_felix
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
-    
+
+
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList
     for i in range(iterations):
@@ -123,10 +132,12 @@ def testContact():
         contact=True
         vitesse[2]=0
 
+
 def testPosMot(a,i):
     global motAngleList,motAngleLim
     if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
+<<<<<<< HEAD
         
 
 def momentInertie(listePoints,origine,vector):#listePoints : liste de [coordonnées,masse]
@@ -178,6 +189,30 @@ def rotTriangle(triangle,point):# see ray casting algorithm
         vec2=np.cross(normaux[0],np.subtract(point,triangle[0]))
         return [False,listeVecteurs[1]]
             
+=======
+    
+#TODO faire une fonction qui donne les couples des moteurs en fonction des vitesses
+# à déterminer par une modélisation empirique. Rappel : P = C * omega
+
+#TODO choisir parmi les possibilités suivantes :
+# - pas de glissement, éliminer les rotations incompatibles
+# - pas de glissement, imposer une contrainte sur la plateforme, quand on le teste
+# le modifier immédiatement
+# - glissement, avec des frottements...
+
+#TODO comment déterminer le moment cinétique ?
+# on peut se contenter de calculer uniquement le moment cinétique de la plateforme
+# (modélisée par 4 points ? + la batterie)
+
+#TODO fonction pour faire basculer le robot
+
+#TODO tester les nouvelles fonctions
+
+
+
+
+    
+>>>>>>> origin/test_felix
 #--------------Initialisation---------------
 fig = plt.figure()
 ax = Axes3D(fig)
