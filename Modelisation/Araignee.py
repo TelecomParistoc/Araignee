@@ -53,13 +53,7 @@ def update(listeObjets):
     ax.set_ylim3d(-axlim,axlim)
     ax.set_zlim3d(-axlim,axlim)
     plt.pause(0.00000001)
-<<<<<<< HEAD
-    
-    
-=======
 
-
->>>>>>> origin/test_felix
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
 
@@ -137,82 +131,10 @@ def testPosMot(a,i):
     global motAngleList,motAngleLim
     if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
-<<<<<<< HEAD
+
         
 
-def momentInertie(listePoints,origine,vector):#listePoints : liste de [coordonnées,masse]
-    J=0
-    #for point in listePoints:
-        #J+=point[1]*(distanceDroitePoint(point[0],origine,vector))**2
-    #return (J)
 
-def rotTriangle(triangle,point):# see ray casting algorithm
-    vecTest=[0,1]#direction choisie arbitrairement
-    count=0
-    listeVecteurs=[[triangle[0],triangle[1]],[triangle[1],triangle[2]],[triangle[2],triangle[0]]]
-    for vecteur in listeVecteurs :
-        if vecteur[1][1]>vecteur[0][1]:
-            A=[vecteur[0][0],vecteur[0][1]]
-            B=[vecteur[1][0],vecteur[1][1]]
-        else:
-            A=[vecteur[1][0],vecteur[1][1]]
-            B=[vecteur[0][0],vecteur[0][1]]
-        if max(vecteur[0][0],vecteur[1][0])>point[0] and min(vecteur[0][0],vecteur[1][0])<point[0]:
-            if A[1]>point[1] :
-                count+=1
-            if B[1]>point[1] :
-                if A[0]!=B[0]:
-                    pente1=abs((B[1]-A[1])/(B[0]-A[0]))
-                    pente2=abs((point[1]-A[1])/(point[0]-A[0]))
-                    if pente2<pente1 :
-                        count+=1
-    if count%2==1:
-        return [True,None,None]
-    else :
-        normaux=[]
-        normaux.append([projeteOrtho(triangle[2],triangle[0],np.subtract(triangle[1],triangle[0]))])#vecteur normal au 1ersegment
-        normaux.append([projeteOrtho(triangle[0],triangle[1],np.subtract(triangle[2],triangle[1]))])#vecteur normal au second segment
-        normaux.append([projeteOrtho(triangle[1],triangle[2],np.subtract(triangle[0],triangle[2]))])#vecteur normal au troisième segment
-        
-        vec1=np.cross(normaux[0],np.subtract(point,triangle[1]))
-        vec2=np.cross(normaux[1],np.subtract(point,triangle[1]))
-        if np.dot(vec1,vec2)<0:
-            return [False,listeVecteurs[2]]
-            
-        vec1=np.cross(normaux[1],np.subtract(point,triangle[2]))
-        vec2=np.cross(normaux[2],np.subtract(point,triangle[2]))
-        
-        if np.dot(vec1,vec2)<0:
-            return [False,listeVecteurs[0]]
-            
-        vec1=np.cross(normaux[2],np.subtract(point,triangle[0]))
-        vec2=np.cross(normaux[0],np.subtract(point,triangle[0]))
-        return [False,listeVecteurs[1]]
-            
-=======
-    
-#TODO faire une fonction qui donne les couples des moteurs en fonction des vitesses
-# à déterminer par une modélisation empirique. Rappel : P = C * omega
-
-#TODO choisir parmi les possibilités suivantes :
-# - pas de glissement, éliminer les rotations incompatibles
-# - pas de glissement, imposer une contrainte sur la plateforme, quand on le teste
-# le modifier immédiatement
-# - glissement, avec des frottements...
-
-#TODO comment déterminer le moment cinétique ?
-# on peut se contenter de calculer uniquement le moment cinétique de la plateforme
-# (modélisée par 4 points ? + la batterie)
-
-#TODO fonction pour faire basculer le robot
-
-#TODO tester les nouvelles fonctions
-
-
-
-
-    
->>>>>>> origin/test_felix
 #--------------Initialisation---------------
 fig = plt.figure()
 ax = Axes3D(fig)
