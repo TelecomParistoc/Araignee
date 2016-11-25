@@ -135,7 +135,7 @@ def momentInertie(listePoints,origine,vector):#listePoints : liste de [coordonn√
         #J+=point[1]*(distanceDroitePoint(point[0],origine,vector))**2
     #return (J)
 
-def pointInTriangle(triangle,point):# see ray casting algorithm
+def rotTriangle(triangle,point):# see ray casting algorithm
     vecTest=[0,1]#direction choisie arbitrairement
     count=0
     listeVecteurs=[[triangle[0],triangle[1]],[triangle[1],triangle[2]],[triangle[2],triangle[0]]]
@@ -156,10 +156,27 @@ def pointInTriangle(triangle,point):# see ray casting algorithm
                     if pente2<pente1 :
                         count+=1
     if count%2==1:
-        return True
+        return [True,None,None]
     else :
-        return False
-                
+        normaux=[]
+        normaux.append([projeteOrtho(triangle[2],triangle[0],np.subtract(triangle[1],triangle[0]))])#vecteur normal au 1ersegment
+        normaux.append([projeteOrtho(triangle[0],triangle[1],np.subtract(triangle[2],triangle[1]))])#vecteur normal au second segment
+        normaux.append([projeteOrtho(triangle[1],triangle[2],np.subtract(triangle[0],triangle[2]))])#vecteur normal au troisi√®me segment
+        
+        vec1=np.cross(normaux[0],np.subtract(point,triangle[1]))
+        vec2=np.cross(normaux[1],np.subtract(point,triangle[1]))
+        if np.dot(vec1,vec2)<0:
+            return [False,listeVecteurs[2]]
+            
+        vec1=np.cross(normaux[1],np.subtract(point,triangle[2]))
+        vec2=np.cross(normaux[2],np.subtract(point,triangle[2]))
+        
+        if np.dot(vec1,vec2)<0:
+            return [False,listeVecteurs[0]]
+            
+        vec1=np.cross(normaux[2],np.subtract(point,triangle[0]))
+        vec2=np.cross(normaux[0],np.subtract(point,triangle[0]))
+        return [False,listeVecteurs[1]]
             
 #--------------Initialisation---------------
 fig = plt.figure()
@@ -307,7 +324,7 @@ motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
 
-#Time(150)
+Time(150)
 
 #------------------------------------------
 
