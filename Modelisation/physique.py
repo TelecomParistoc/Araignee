@@ -5,10 +5,14 @@ import numpy as np
 from geometrie import*
 
 def moment_poids(listePoints, origine, vecteur, g):
+    """calcule le moment du poids autour de l'axe définit par son origine et un vecteur"""
+
     moment = [0, 0, 0]
-    a, b, c = 1.*vecteur[0], 1.*vecteur[1], 1.*vecteur[2]
-    x, y, z = 1.*origine[0], 1.*origine[1], 1.*origine[2]
+
     for elt in listePoints:
+        """pour chaque élément on calcule le projete du point sur le plan horizontal (projete_point)
+        on calcule le vecteur du bras de levier (projete_vec) et on fait le produit scalaire"""
+
         projete_point = [elt[0][0], elt[0][1], 0]
         projete_vec = np.subtract(projete_point, projeteOrtho(projete_point, origine, vecteur))
         p = [0,0,-elt[1]*g]
