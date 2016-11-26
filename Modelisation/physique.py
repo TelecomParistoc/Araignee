@@ -18,3 +18,9 @@ def moment_poids(listePoints, origine, vecteur, g):
         p = [0,0,-elt[1]*g]
         moment = np.add(moment, np.cross(projete_vec, p))
     return moment
+
+def momentInertie(listePoints,origine,vector):#listePoints : liste de [coordonnees,masse]
+    J=0
+    for point in listePoints:
+        J+=point[1]*(distanceDroitePoint(point[0],origine,vector))**2
+    return (J)
