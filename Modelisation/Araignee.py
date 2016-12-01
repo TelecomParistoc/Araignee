@@ -59,10 +59,12 @@ def normalized(vector):
 
 
 def Time(iterations):
-    global vitesse,motSpeedList,motAngleList
+    global vitesse,motSpeedList,motAngleList, contact, contactList
     for i in range(iterations):
+        print("centre",ObjetParNom["centre"])
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
+            print("vitesse",vitesse)
         move(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
             print(contactList[a])
@@ -98,7 +100,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
             else:
-                print("contact")
+                print("contact"+str(a))
                 if a==0 or a==3:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -162,6 +164,7 @@ def testContact():
     i=0
     n=len(ObjetParNom["support0"])
     contactList=[False,False,False,False]
+    contact=False
     while i<n and not contactList[0]:
         if ObjetParNom["support0"][i][2]<=0:
             contactList[0]=True
@@ -184,6 +187,8 @@ def testContact():
     if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
         contact=True
         vitesse[2]=0
+        print("aa",contact)
+    
 
 
 def testPosMot(a,i):
@@ -212,7 +217,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,20]
+centre=[0,0,10]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -335,12 +340,11 @@ mot3Angle=[0,0]
 
 
 global motSpeedList,motAngleList,motAngleLim
-motAngleLim=[[3.14/10,-3.14/20],[3.14/8,-3.14/18]]#[[max,min],[max,min]] 
+motAngleLim=[[3.14/10,-3.14/20],[3.14/4,-3.14/9]]#[[max,min],[max,min]] 
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
-
-Time(150)
+Time(50)
 
 #------------------------------------------
 
