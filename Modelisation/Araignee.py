@@ -219,7 +219,7 @@ def posPieds():
     listePieds = []
     for i range(4):
         if contact[i]:
-            listePieds += [ObjetParNom["support"+str(i)]]
+            listePieds += [[i[ObjetParNom["support"+str(i)]]]]
     return listePieds
 
 
@@ -227,6 +227,16 @@ def testPosMot(a,i):
     global motAngleList,motAngleLim
     if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
+
+
+def updateRot(centreGravite, dt) :
+    """fonction qui met à jour la liste listeRotation contenant les axes
+    et les vitesses angulaires"""
+
+    global listeRotation
+    testContact()
+    listePieds = posPieds()
+    origine, vecteur = axeRotation(listePieds, centreGravite)
 
 
 
@@ -375,6 +385,13 @@ global motSpeedList,motAngleList,motAngleLim
 motAngleLim=[[3.14/10,-3.14/10],[3.14/10,-3.14/10]]#[[max,min],[max,min]]  vert,horiz
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
+
+
+# axesRotation : liste de listes contenant un axe et une vitesse angulaire
+# [origine, vecteur, vitesse_angulaire]
+# TODO déterminer une convention de rotation (trigo)
+global listeRotation
+listeRotation = []
 
 Time(100)
 

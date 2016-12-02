@@ -32,23 +32,29 @@ def momentInertie(listePoints, origine, vector):
 
 
 # TODO vérifier la fonction ci-après
-def axeRotation(listePoints, listePieds, centreGravite):
-    """fonction qui détermine quel est l'axe de rotation du robot
-    renvoie une origine et un vecteur"""
+def axeRotation(listePieds, centreGravite):
+    """fonction qui détermine sur quels pieds le robot va basculer
+    listePieds : [[num du pieds, coordonnees2D]]"""
 
-    n = len(listePoints)
+    n = len(listePieds)
+    listeCoord = [elt[1] for elt in listePieds]
 
     if n == 1:
         projete = centreGravite[0:2] + [0]
-        vecteurNormal = np.subtract(projete, listePoints[0])
-        return (listePoints[0], np.cross(vecteurNormal, [0, 0, 1]))
+        vecteurNormal = np.subtract(projete, listeCoord[0])
+        return (listePieds[0][0], null)
+        # Renvoie null pour dire qu'il n'y a qu'un seul pieds
+        # TODO traiter ce cas en aval
 
     elif n == 2:
-        return (listePoints[0], np.subtract(listePoints[0], listePoints[1]))
+        return (listePieds[0][0], listePieds[1][0])
 
     elif n == 3:
-        liste = rotTriangle(listePoints, centreGravite[0:2]+[0])
-        return(liste[1], liste[2])
+        liste = rotTriangle(listePieds, centreGravite)
+        if liste[1]:
+            return(liste[1], liste[2])
+        else:
+            return(null, null)
 
     else:
         return (null, null)
