@@ -219,7 +219,7 @@ def posPieds():
     listePieds = []
     for i range(4):
         if contact[i]:
-            listePieds += [[i[ObjetParNom["support"+str(i)]]]]
+            listePieds += [[i, [ObjetParNom["support"+str(i)][0:2]]]]
     return listePieds
 
 
@@ -229,14 +229,46 @@ def testPosMot(a,i):
         motSpeedList[a][i]*=-1
 
 
-def updateRot(centreGravite, dt) :
+def getMasses():
+    """fonction qui renvoie une liste avec les coordonnées des quatre
+    moteurs associés à leur masse"""
+    global masse
+
+    listePoints = []
+    # TODO modifier quand ça ira
+    for i in range(4):
+        listePoints += [[[ObjetParNom["plateforme"][i]], 2*masse]]
+
+    return listePoints
+
+
+# TODO vérifier que la fonction marche
+def updateRot(centreGravite, dt):
     """fonction qui met à jour la liste listeRotation contenant les axes
     et les vitesses angulaires"""
 
     global listeRotation
     testContact()
     listePieds = posPieds()
-    origine, vecteur = axeRotation(listePieds, centreGravite)
+    ref1, ref2 = axeRotation(listePieds, centreGravite)
+    if ref1 is null:
+        listeRotation = []
+    elif listeRotation == []:
+        listeRotation = [ref1, ref2, 0]
+    else:
+        if ref1, ref2 == listeRotation[0], listeRotation[1]:
+            omega = listeRotation[2]
+            origine = ObjetParNom["patte"+str(ref1)+"Inf2"][1]
+            point = ObjetParNom["patte"+str(ref2)+"Inf2"][1]
+            vecteur = np.subtract(origine, point)
+            listeRotation = [ref1, ref2, omega]
+            mom_poids = moment_poids(getMasses(), origine, vecteur, 9.81)
+            mom_inertie = momentInertie(getMasses(), origine, vecteur)
+            omega += (mom_poids/mom_inertie)*dt
+        else:
+            listeRotation = [ref1, ref2, 0]
+
+
 
 
 
@@ -388,10 +420,13 @@ motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
 
 # axesRotation : liste de listes contenant un axe et une vitesse angulaire
-# [origine, vecteur, vitesse_angulaire]
+# [ref pied 1, ref pied 2, vitesse_angulaire]
 # TODO déterminer une convention de rotation (trigo)
 global listeRotation
 listeRotation = []
+
+global masseMoteur
+masseMoteur = 50*10**(-3)
 
 Time(100)
 
