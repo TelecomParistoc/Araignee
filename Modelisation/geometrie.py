@@ -24,7 +24,8 @@ def distanceDroitePoint(point, origine, vecteur):
 
 
 def projeteOrtho(point, origine, vecteur):
-    """fonction qui renvoie les coordonnées du projeté orthogonal d'un point sur une droite
+    """fonction qui renvoie les coordonnées du projeté orthogonal d'un point sur
+    une droite.
     droite : liste de deux points"""
     d = -np.vdot(vecteur, point)
     a, b, c = 1.*vecteur[0], 1.*vecteur[1], 1.*vecteur[2]
@@ -33,7 +34,8 @@ def projeteOrtho(point, origine, vecteur):
     return [a*t+x, b*t+y, c*t+z]
 
 
-#retourne [False/True, origine (point de l'axe de rotation),vecteur directeur de l'axe de rotation] origine=vecteur = None si pas de rotation
+# retourne [False/True, origine (point de l'axe de rotation),vecteur directeur 
+# de l'axe de rotation] origine=vecteur = None si pas de rotation
 def rotTriangle(triangle,point):# see ray casting algorithm
     direction=[0,1]#direction choisie arbitrairement, notée ici mais pas utilisée
     count=0
@@ -62,7 +64,7 @@ def rotTriangle(triangle,point):# see ray casting algorithm
         normaux.append([projeteOrtho(triangle[2]+[0],triangle[0]+[0],np.concatenate([np.subtract(triangle[1],triangle[0]),[0]])),triangle[2]+[0]])#segment sommet-projection ortho
         normaux.append([projeteOrtho(triangle[0]+[0],triangle[1]+[0],np.concatenate([np.subtract(triangle[2],triangle[1]),[0]])),triangle[0]+[0]])#segment sommet-projection ortho
         normaux.append([projeteOrtho(triangle[1]+[0],triangle[2]+[0],np.concatenate([np.subtract(triangle[0],triangle[2]),[0]])),triangle[1]+[0]])#segment sommet-projection ortho
-        print(normaux)        
+        print(normaux)
         for i in range(3):
             normaux[i]=np.subtract(normaux[i][1],normaux[i][0])[0:2]#passage d'un segment formé de 2 points à un vecteur et on se replace en 2D
         print(normaux)
@@ -73,14 +75,13 @@ def rotTriangle(triangle,point):# see ray casting algorithm
         print(vec2)
         if np.dot(vec1,vec2)<0:
             return [True,np.subtract(listeVecteurs[2][1],listeVecteurs[2][0])]
-            
+
         vec1=np.cross(normaux[1],np.subtract(point,triangle[2]))
         vec2=np.cross(normaux[2],np.subtract(point,triangle[2]))
-        
+
         if np.dot(vec1,vec2)<0:
             return [True,np.subtract(listeVecteurs[0][1],listeVecteurs[0][0])]
-            
+
         vec1=np.cross(normaux[2],np.subtract(point,triangle[0]))
         vec2=np.cross(normaux[0],np.subtract(point,triangle[0]))
         return [True,np.subtract(listeVecteurs[1][1],listeVecteurs[1][0])]
-            

@@ -44,9 +44,9 @@ def update(listeObjets):
         Coord=[]
         for a in range(3):
             Coord.append([])
-            for b in range(len(objet)): 
+            for b in range(len(objet)):
                 Coord[a].append(objet[b][a])
-    
+
         ax.add_collection3d(Poly3DCollection([zip(Coord[0],Coord[1],Coord[2])]))
     ax.autoscale_view(True,True,True,True)
     ax.set_xlim3d(-axlim,axlim)
@@ -127,7 +127,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-                    
+
                 else:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],+motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -154,7 +154,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-        
+
         if contact:#respect des dimensions forcé
             u=[0.0,0.0,0.0]
             for i in range(4):
@@ -177,7 +177,7 @@ def Time(iterations):
         print("speedList",motSpeedList)
         print("motAngleList",motAngleList)
         print("motAngleLim", motAngleLim)
-    
+
 
 def testContact():
     global vitesse,contact,contactList
@@ -193,22 +193,34 @@ def testContact():
     while i<n and not contactList[1]:
         if ObjetParNom["support1"][i][2]<=0:
             contactList[1]=True
-        i+=1 
+        i+=1
     i=0
     while i<n and not contactList[2]:
         if ObjetParNom["support2"][i][2]<=0:
             contactList[2]=True
-        i+=1 
+        i+=1
     i=0
     while i<n and not contactList[3]:
         if ObjetParNom["support3"][i][2]<=0:
             contactList[3]=True
-        i+=1 
+        i+=1
     if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
         contact=True
         vitesse[2]=0
         print("aa",contact)
-    
+
+
+# TODO vérifier que la fonction suivante fonctionne
+
+def posPieds():
+    """fonction qui renvoie une liste avec la position des pieds"""
+    global ObjetParNom, contact
+
+    listePieds = []
+    for i range(4):
+        if contact[i]:
+            listePieds += [ObjetParNom["support"+str(i)]]
+    return listePieds
 
 
 def testPosMot(a,i):
@@ -216,7 +228,7 @@ def testPosMot(a,i):
     if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
 
-        
+
 
 
 #--------------Initialisation---------------
@@ -367,12 +379,3 @@ motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 Time(100)
 
 #------------------------------------------
-
-
-
-        
-        
-        
-        
-        
-        
