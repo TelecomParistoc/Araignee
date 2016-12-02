@@ -65,7 +65,7 @@ def Time(iterations):
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
             print("vitesse",vitesse)
-        move(np.multiply(vitesse,dt),listeObjets)
+            move(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
             print(contactList[a])
             if not contactList[a]:
@@ -154,9 +154,29 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-                
+        
+        if contact:#respect des dimensions forcé
+            u=[0.0,0.0,0.0]
+            for i in range(4):
+                u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
+                u[1]+=ObjetParNom["fixationInf"+str(i)][0][1]
+                u[2]+=ObjetParNom["fixationInf"+str(i)][0][2]
+            u=np.multiply(u,0.25)
+            u[2]-=1
+            vec=np.subtract(u,ObjetParNom["centre"])[0]
+            move(vec,[ObjetParNom["plateforme"],ObjetParNom["centre"]])
+            vitesse=np.multiply(vec,1.0/dt)
+            for i in range(4):
+                u=[0.0,0.0,-1.0]
+                u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
+                u[1]+=ObjetParNom["fixationInf"+str(i)][0][1]
+                u[2]+=ObjetParNom["fixationInf"+str(i)][0][2]
+                move(np.subtract(ObjetParNom["plateforme"][i],u),ObjetParNom["patte"+str(i)]+[ObjetParNom["fixationInf"+str(i)],ObjetParNom["fixationSup"+str(i)]])
         testContact()
         update(listeObjets)
+        print("speedList",motSpeedList)
+        print("motAngleList",motAngleList)
+        print("motAngleLim", motAngleLim)
     
 
 def testContact():
@@ -217,7 +237,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,10]
+centre=[0,0,100]
 NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
 NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
 SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
@@ -328,10 +348,10 @@ g=9.81
 
 
 
-mot0Speed=[5,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[5,0]
-mot2Speed=[5,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[5,0]
+mot0Speed=[5,5]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[5,5]
+mot2Speed=[5,5]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[5,5]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -340,11 +360,11 @@ mot3Angle=[0,0]
 
 
 global motSpeedList,motAngleList,motAngleLim
-motAngleLim=[[3.14/10,-3.14/20],[3.14/4,-3.14/9]]#[[max,min],[max,min]] 
+motAngleLim=[[3.14/10,-3.14/10],[3.14/10,-3.14/10]]#[[max,min],[max,min]]  vert,horiz
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
-Time(50)
+Time(100)
 
 #------------------------------------------
 
