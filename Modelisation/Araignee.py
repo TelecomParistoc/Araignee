@@ -61,13 +61,10 @@ def normalized(vector):
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList, contact, contactList
     for i in range(iterations):
-        print("centre",ObjetParNom["centre"])
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
-            print("vitesse",vitesse)
             move(np.multiply(vitesse,dt),listeObjets)
         for a in range(4):
-            print(contactList[a])
             if not contactList[a]:
                 if a==0 or a==3:
                     if motSpeedList[a][1]!=0:
@@ -100,10 +97,10 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
             else:
-                print("contact"+str(a))
+                
                 if a==0 or a==3:
                     if motSpeedList[a][1]!=0:
-                        rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
+                        rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],+motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
                         motAngleList[a][1]+=motSpeedList[a][1]*dt
                         testPosMot(a,1)
                     if motSpeedList[a][0]>0:
@@ -130,7 +127,7 @@ def Time(iterations):
 
                 else:
                     if motSpeedList[a][1]!=0:
-                        rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],+motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
+                        rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
                         motAngleList[a][1]+=motSpeedList[a][1]*dt
                         testPosMot(a,1)
                     if motSpeedList[a][0]>0:
@@ -171,13 +168,14 @@ def Time(iterations):
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
                 u[1]+=ObjetParNom["fixationInf"+str(i)][0][1]
                 u[2]+=ObjetParNom["fixationInf"+str(i)][0][2]
+                if(i==0 or i==3):
+                    u[0]+=0.5
+                else:
+                    u[0]-=0.5
                 move(np.subtract(ObjetParNom["plateforme"][i],u),ObjetParNom["patte"+str(i)]+[ObjetParNom["fixationInf"+str(i)],ObjetParNom["fixationSup"+str(i)]])
         testContact()
         update(listeObjets)
-        print("speedList",motSpeedList)
-        print("motAngleList",motAngleList)
-        print("motAngleLim", motAngleLim)
-
+    
 
 def testContact():
     global vitesse,contact,contactList
@@ -206,8 +204,8 @@ def testContact():
         i+=1
     if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
         contact=True
-        vitesse[2]=0
-        print("aa",contact)
+        if vitesse[2]<0:
+            vitesse[2]=0
 
 
 # TODO vérifier que la fonction suivante fonctionne
@@ -225,7 +223,7 @@ def posPieds():
 
 def testPosMot(a,i):
     global motAngleList,motAngleLim
-    if motAngleList[a][i]>motAngleLim[i][0]-motAngleList[a][i]*dt or motAngleList[a][i]<motAngleLim[i][1]+motAngleList[a][i]*dt:#limite avec marge d'erreur car calcul temps discret
+    if motAngleList[a][i]>motAngleLim[i][0]-abs(motSpeedList[a][i]*dt) or motAngleList[a][i]<motAngleLim[i][1]+abs(motSpeedList[a][i]*dt):#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
 
 
@@ -291,21 +289,21 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,100]
-NW=[centre[0]-largeur/2,centre[1]+longueur/2,centre[2]]
-NE=[centre[0]+largeur/2,centre[1]+longueur/2,centre[2]]
-SE=[centre[0]+largeur/2,centre[1]-longueur/2,centre[2]]
-SW=[centre[0]-largeur/2,centre[1]-longueur/2,centre[2]]
+centre=[0,0,50]
+NW=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]]
+NE=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]]
+SE=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]]
+SW=[centre[0]-largeur*0.5,centre[1]-longueur*0.5,centre[2]]
 
-fixationSupNW=np.add(NW,[+1/2,0,3])
-fixationSupNE=np.add(NE,[-1/2,0,3])
-fixationSupSE=np.add(SE,[-1/2,0,3])
-fixationSupSW=np.add(SW,[+1/2,0,3])
+fixationSupNW=np.add(NW,[+0.5,0,3])
+fixationSupNE=np.add(NE,[-0.5,0,3])
+fixationSupSE=np.add(SE,[-0.5,0,3])
+fixationSupSW=np.add(SW,[+0.5,0,3])
 
-fixationInfNW=np.add(NW,[-1/2,0,1])
-fixationInfNE=np.add(NE,[+1/2,0,1])
-fixationInfSE=np.add(SE,[+1/2,0,1])
-fixationInfSW=np.add(SW,[-1/2,0,1])
+fixationInfNW=np.add(NW,[-0.5,0,1])
+fixationInfNE=np.add(NE,[+0.5,0,1])
+fixationInfSE=np.add(SE,[+0.5,0,1])
+fixationInfSW=np.add(SW,[-0.5,0,1])
 
 patte0Sup1=[fixationSupNW,np.add(fixationSupNW,[-longueurSup1Patte,0,0])]
 patte0Sup2=[fixationInfNW,np.add(fixationInfNW,[-longueurSup2Patte,0,0])]
@@ -402,10 +400,10 @@ g=9.81
 
 
 
-mot0Speed=[5,5]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[5,5]
-mot2Speed=[5,5]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[5,5]
+mot0Speed=[16,17]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[16,17]
+mot2Speed=[16,17]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[16,17]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -414,7 +412,7 @@ mot3Angle=[0,0]
 
 
 global motSpeedList,motAngleList,motAngleLim
-motAngleLim=[[3.14/10,-3.14/10],[3.14/10,-3.14/10]]#[[max,min],[max,min]]  vert,horiz
+motAngleLim=[[3.14/5,-3.14/5],[3.14/6,-3.14/4]]#[[max,min],[max,min]]  vert,horiz
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
