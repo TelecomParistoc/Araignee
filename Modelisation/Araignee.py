@@ -124,7 +124,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-                    
+                
                 else:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -151,7 +151,32 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
+                        
+                
         if contact:#respect des dimensions forcé
+        
+            L=listePatteContact()
+            plusHaut=L[0]
+            for a in L:
+                if ObjetParNom["fixationInf"+str(a)][0][2]>ObjetParNom["fixationInf"+str(plusHaut)][0][2]:
+                    plusHaut=a
+            oppose=(plusHaut+2)%4
+            origine=ObjetParNom["patte"+str(oppose)+"Inf2"][1]
+            vec2=np.subtract(ObjetParNom["plateforme"][plusHaut],ObjetParNom["plateforme"][oppose])
+            vec1=[vec2[0],vec2[1],np.subtract(ObjetParNom["fixationInf"+str(plusHaut)][0],ObjetParNom["fixationInf"+str(oppose)][0])[2]]
+            dot=np.dot(vec2,vec1)
+            cos=dot/(np.linalg.norm(vec1)*np.linalg.norm(vec2))
+            if cos>1:
+                angle=0
+            elif cos<-1:
+                angle=np.pi
+            else:
+                angle=np.arccos(cos)
+            if angle!=0:
+                vec=np.cross(vec2,vec1)
+                rotation(origine,vec,-angle/dt,listeObjets)
+            
+            
             u=[0.0,0.0,0.0]
             for i in range(4):
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
@@ -175,6 +200,13 @@ def Time(iterations):
         testContact()
         update(listeObjets)
     
+def listePatteContact():
+    l=[]
+    for i in range(4):
+        if contactList[i]:
+            l.append(i)
+            
+    return(l)
 
 def testContact():
     global vitesse,contact,contactList
@@ -235,7 +267,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,50]
+centre=[0,0,5]
 NW=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]]
 NE=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]]
 SE=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]]
@@ -346,10 +378,10 @@ g=9.81
 
 
 
-mot0Speed=[16,17]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[16,17]
-mot2Speed=[16,17]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[16,17]
+mot0Speed=[-5,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[-7,0]
+mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[0,0]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
