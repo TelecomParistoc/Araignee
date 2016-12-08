@@ -61,6 +61,7 @@ def normalized(vector):
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList, contact, contactList
     for i in range(iterations):
+        print(i)
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
             move(np.multiply(vitesse,dt),listeObjets)
@@ -155,26 +156,7 @@ def Time(iterations):
                 
         if contact:#respect des dimensions forcé
         
-            L=listePatteContact()
-            plusHaut=L[0]
-            for a in L:
-                if ObjetParNom["fixationInf"+str(a)][0][2]>ObjetParNom["fixationInf"+str(plusHaut)][0][2]:
-                    plusHaut=a
-            oppose=(plusHaut+2)%4
-            origine=ObjetParNom["patte"+str(oppose)+"Inf2"][1]
-            vec2=np.subtract(ObjetParNom["plateforme"][plusHaut],ObjetParNom["plateforme"][oppose])
-            vec1=[vec2[0],vec2[1],np.subtract(ObjetParNom["fixationInf"+str(plusHaut)][0],ObjetParNom["fixationInf"+str(oppose)][0])[2]]
-            dot=np.dot(vec2,vec1)
-            cos=dot/(np.linalg.norm(vec1)*np.linalg.norm(vec2))
-            if cos>1:
-                angle=0
-            elif cos<-1:
-                angle=np.pi
-            else:
-                angle=np.arccos(cos)
-            if angle!=0:
-                vec=np.cross(vec2,vec1)
-                rotation(origine,vec,-angle/dt,listeObjets)
+          
             
             
             u=[0.0,0.0,0.0]
@@ -379,7 +361,7 @@ g=9.81
 
 
 mot0Speed=[-5,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[-7,0]
+mot1Speed=[-1,0]
 mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
 mot3Speed=[0,0]
 
