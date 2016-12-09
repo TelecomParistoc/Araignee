@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.pyplot as plt
@@ -17,7 +19,8 @@ def moment_poids(listePoints, origine, vecteur, g):
         (projete_vec) et on fait le produit scalaire"""
 
         projete_point = [elt[0][0], elt[0][1], 0]
-        projete_vec = np.subtract(projete_point, projeteOrtho(projete_point, origine, vecteur))
+        projete_vec = np.subtract(projete_point, projeteOrtho(
+                                            projete_point, origine, vecteur))
         p = [0, 0, -elt[1]*g]
         moment = np.add(moment, np.cross(projete_vec, p))
     return moment
@@ -31,10 +34,9 @@ def momentInertie(listePoints, origine, vector):
     return (J)
 
 
-# TODO vérifier la fonction ci-après
 def axeRotation(listePieds, centreGravite):
     """fonction qui détermine sur quels pieds le robot va basculer
-    listePieds : [[num du pieds, coordonnees2D]]"""
+    listePieds : [[num du pied, coordonnees2D]]"""
 
     n = len(listePieds)
     listeCoord = [elt[1] for elt in listePieds]
@@ -42,8 +44,8 @@ def axeRotation(listePieds, centreGravite):
     if n == 1:
         projete = centreGravite[0:2] + [0]
         vecteurNormal = np.subtract(projete, listeCoord[0])
-        return (listePieds[0][0], null)
-        # Renvoie null pour dire qu'il n'y a qu'un seul pieds
+        return (listePieds[0][0], None)
+        # Renvoie None pour dire qu'il n'y a qu'un seul pieds
         # TODO traiter ce cas en aval
 
     elif n == 2:
@@ -54,7 +56,7 @@ def axeRotation(listePieds, centreGravite):
         if liste[1]:
             return(liste[1], liste[2])
         else:
-            return(null, null)
+            return(None, None)
 
     else:
-        return (null, null)
+        return (None, None)

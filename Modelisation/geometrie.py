@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def conc(A):
+    """Fonction pour écrire moins"""
+
+    return(np.concatenate(A))
+
+
 def distancePointPoint(A, B):
     return np.linalg.norm(np.subtract(B, A))
 
@@ -27,7 +33,7 @@ def distanceDroitePoint(point, origine, vecteur):
 def projeteOrtho(point, origine, vecteur):
     """fonction qui renvoie les coordonnées du projeté orthogonal d'un point sur
     une droite.
-    droite : liste de deux points"""
+    droite : origine et vecteur"""
 
     d = -np.vdot(vecteur, point)
     a, b, c = 1.*vecteur[0], 1.*vecteur[1], 1.*vecteur[2]
@@ -42,7 +48,7 @@ def rotTriangle(listePieds, point):
     liste = [[numerodupieds, coordonnees]]
     renvoie : [True, num d'un pied impliqué, num de l'autre pied impliqué]"""
 
-    triange = [elt[1] for elt in listePieds]
+    triangle = [elt[1] for elt in listePieds]
     referencePied = dict()
     referencePied[0] = listePieds[0][0]
     referencePied[1] = listePieds[1][0]
@@ -70,13 +76,13 @@ def rotTriangle(listePieds, point):
         return [False,None,None]
     else :
         normaux=[]
-        print(triangle[2]+[0],triangle[0]+[0],np.concatenate([np.subtract(triangle[1],triangle[0]),[0]]))#/!\ passage en 3D pour le projete
-        normaux.append([projeteOrtho(triangle[2]+[0],triangle[0]+[0],np.concatenate([np.subtract(triangle[1],triangle[0]),[0]])),triangle[2]+[0]])#segment sommet-projection ortho
-        normaux.append([projeteOrtho(triangle[0]+[0],triangle[1]+[0],np.concatenate([np.subtract(triangle[2],triangle[1]),[0]])),triangle[0]+[0]])#segment sommet-projection ortho
-        normaux.append([projeteOrtho(triangle[1]+[0],triangle[2]+[0],np.concatenate([np.subtract(triangle[0],triangle[2]),[0]])),triangle[1]+[0]])#segment sommet-projection ortho
+        print(triangle[2]+[0],triangle[0]+[0],conc([np.subtract(triangle[1],triangle[0]),[0]]))#/!\ passage en 3D pour le projete
+        normaux.append([projeteOrtho(conc([triangle[2], [0]]), conc([triangle[0], [0]]), conc([np.subtract(triangle[1],triangle[0]),[0]])),triangle[2]+[0]])#segment sommet-projection ortho
+        normaux.append([projeteOrtho(conc([triangle[0], [0]]), conc([triangle[1], [0]]), conc([np.subtract(triangle[2],triangle[1]),[0]])),triangle[0]+[0]])#segment sommet-projection ortho
+        normaux.append([projeteOrtho(conc([triangle[1], [0]]), conc([triangle[2], [0]]), conc([np.subtract(triangle[0],triangle[2]),[0]])),triangle[1]+[0]])#segment sommet-projection ortho
         print(normaux)
         for i in range(3):
-            normaux[i]=np.subtract(normaux[i][1],normaux[i][0])[0:2]#passage d'un segment formé de 2 points à un vecteur et on se replace en 2D
+            normaux[i]=np.subtract(normaux[i][1],normaux[i][0][0:2])#passage d'un segment formé de 2 points à un vecteur et on se replace en 2D
         print(normaux)
         print(normaux[0],np.subtract(point,triangle[1]))
         vec1=np.cross(normaux[0],np.subtract(point,triangle[1]))

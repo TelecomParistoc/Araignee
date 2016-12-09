@@ -97,7 +97,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
             else:
-                
+
                 if a==0 or a==3:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],+motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -175,7 +175,7 @@ def Time(iterations):
                 move(np.subtract(ObjetParNom["plateforme"][i],u),ObjetParNom["patte"+str(i)]+[ObjetParNom["fixationInf"+str(i)],ObjetParNom["fixationSup"+str(i)]])
         testContact()
         update(listeObjets)
-    
+
 
 def testContact():
     global vitesse,contact,contactList
@@ -208,16 +208,14 @@ def testContact():
             vitesse[2]=0
 
 
-# TODO vérifier que la fonction suivante fonctionne
-
 def posPieds():
     """fonction qui renvoie une liste avec la position des pieds"""
-    global ObjetParNom, contact
+    global ObjetParNom, contactList
 
     listePieds = []
-    for i range(4):
-        if contact[i]:
-            listePieds += [[i, [ObjetParNom["support"+str(i)][0:2]]]]
+    for i in range(4):
+        if contactList[i]:
+            listePieds += [[i, ObjetParNom["patte"+str(i)+"Inf2"][1][0:2]]]
     return listePieds
 
 
@@ -230,39 +228,39 @@ def testPosMot(a,i):
 def getMasses():
     """fonction qui renvoie une liste avec les coordonnées des quatre
     moteurs associés à leur masse"""
-    global masse
+    global masseMoteur
 
     listePoints = []
     # TODO modifier quand ça ira
     for i in range(4):
-        listePoints += [[[ObjetParNom["plateforme"][i]], 2*masse]]
+        listePoints += [[ObjetParNom["plateforme"][i], 2*masseMoteur]]
 
     return listePoints
 
 
 # TODO vérifier que la fonction marche
 def updateRot(centreGravite, dt):
-    """fonction qui met à jour la liste listeRotation contenant les axes
-    et les vitesses angulaires"""
+    """fonction qui met à jour la liste listeRotation contenant l'axe'
+    et la vitesse angulaire"""
 
     global listeRotation
     testContact()
     listePieds = posPieds()
     ref1, ref2 = axeRotation(listePieds, centreGravite)
-    if ref1 is null:
+    if ref1 is None:
         listeRotation = []
     elif listeRotation == []:
         listeRotation = [ref1, ref2, 0]
     else:
-        if ref1, ref2 == listeRotation[0], listeRotation[1]:
+        if ref1 == listeRotation[0] and ref2 == listeRotation[1]:
             omega = listeRotation[2]
             origine = ObjetParNom["patte"+str(ref1)+"Inf2"][1]
             point = ObjetParNom["patte"+str(ref2)+"Inf2"][1]
             vecteur = np.subtract(origine, point)
-            listeRotation = [ref1, ref2, omega]
             mom_poids = moment_poids(getMasses(), origine, vecteur, 9.81)
             mom_inertie = momentInertie(getMasses(), origine, vecteur)
             omega += (mom_poids/mom_inertie)*dt
+            listeRotation = [ref1, ref2, omega]
         else:
             listeRotation = [ref1, ref2, 0]
 
@@ -400,10 +398,10 @@ g=9.81
 
 
 
-mot0Speed=[16,17]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[16,17]
-mot2Speed=[16,17]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[16,17]
+mot0Speed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[0,0]
+mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[0,0]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
