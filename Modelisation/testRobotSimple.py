@@ -57,7 +57,7 @@ def update(listeObjets):
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
 
-mot0Speed=+5# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot0Speed=+7# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
 mot1Speed=+7
 
 def Time(iterations):
