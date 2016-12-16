@@ -44,9 +44,9 @@ def update(listeObjets):
         Coord=[]
         for a in range(3):
             Coord.append([])
-            for b in range(len(objet)): 
+            for b in range(len(objet)):
                 Coord[a].append(objet[b][a])
-    
+
         ax.add_collection3d(Poly3DCollection([zip(Coord[0],Coord[1],Coord[2])]))
     ax.autoscale_view(True,True,True,True)
     ax.set_xlim3d(-axlim,axlim)
@@ -98,7 +98,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
             else:
-                
+
                 if a==0 or a==3:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],+motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -125,7 +125,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-                        
+
                 else:
                     if motSpeedList[a][1]!=0:
                         rotation(ObjetParNom["patte"+str(a)+"Inf2"][1],[0,0,1],-motSpeedList[a][1],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
@@ -152,7 +152,7 @@ def Time(iterations):
                         motAngleList[a][0]+=motSpeedList[a][0]*dt
                         testPosMot(a,0)
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
-                           
+
         if contact:#respect des dimensions forcé
            
             
@@ -251,22 +251,35 @@ def testContact():
     while i<n and not contactList[1]:
         if ObjetParNom["support1"][i][2]<=0:
             contactList[1]=True
-        i+=1 
+        i+=1
     i=0
     while i<n and not contactList[2]:
         if ObjetParNom["support2"][i][2]<=0:
             contactList[2]=True
-        i+=1 
+        i+=1
     i=0
     while i<n and not contactList[3]:
         if ObjetParNom["support3"][i][2]<=0:
             contactList[3]=True
-        i+=1 
+        i+=1
     if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
         contact=True
         if vitesse[2]<0:
             vitesse[2]=0
 """        
+
+
+def posPieds():
+    """fonction qui renvoie une liste avec la position des pieds"""
+    global ObjetParNom, contactList
+
+    listePieds = []
+    for i in range(4):
+        if contactList[i]:
+            listePieds += [[i, ObjetParNom["patte"+str(i)+"Inf2"][1][0:2]]]
+    return listePieds
+
+
 def testContact():
     global vitesse,contact,contactList
     contactList=[False,False,False,False]
@@ -280,12 +293,55 @@ def testContact():
             vitesse[2]=0    
 
 
+
 def testPosMot(a,i):
     global motAngleList,motAngleLim
     if motAngleList[a][i]>motAngleLim[i][0]-abs(motSpeedList[a][i]*dt) or motAngleList[a][i]<motAngleLim[i][1]+abs(motSpeedList[a][i]*dt):#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
 
-        
+
+def getMasses():
+    """fonction qui renvoie une liste avec les coordonnées des quatre
+    moteurs associés à leur masse"""
+    global masseMoteur
+
+    listePoints = []
+    # TODO modifier quand ça ira
+    for i in range(4):
+        listePoints += [[ObjetParNom["plateforme"][i], 2*masseMoteur]]
+
+    return listePoints
+
+
+# TODO vérifier que la fonction marche
+def updateRot(centreGravite, dt):
+    """fonction qui met à jour la liste listeRotation contenant l'axe'
+    et la vitesse angulaire"""
+
+    global listeRotation
+    testContact()
+    listePieds = posPieds()
+    ref1, ref2 = axeRotation(listePieds, centreGravite)
+    if ref1 is None:
+        listeRotation = []
+    elif listeRotation == []:
+        listeRotation = [ref1, ref2, 0]
+    else:
+        if ref1 == listeRotation[0] and ref2 == listeRotation[1]:
+            omega = listeRotation[2]
+            origine = ObjetParNom["patte"+str(ref1)+"Inf2"][1]
+            point = ObjetParNom["patte"+str(ref2)+"Inf2"][1]
+            vecteur = np.subtract(origine, point)
+            mom_poids = moment_poids(getMasses(), origine, vecteur, 9.81)
+            mom_inertie = momentInertie(getMasses(), origine, vecteur)
+            omega += (mom_poids/mom_inertie)*dt
+            listeRotation = [ref1, ref2, omega]
+        else:
+            listeRotation = [ref1, ref2, 0]
+
+
+
+
 
 
 #--------------Initialisation---------------
@@ -417,10 +473,10 @@ g=9.81
 
 
 
-mot0Speed=[5,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[5,0]
-mot2Speed=[5,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[5,0]
+mot0Speed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[0,0]
+mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[0,0]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -432,15 +488,16 @@ global motSpeedList,motAngleList,motAngleLim
 motAngleLim=[[3.14/5,-3.14/5],[3.14/6,-3.14/4]]#[[max,min],[max,min]]  vert,horiz
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
-    
-Time(30)
+
+# axesRotation : liste de listes contenant un axe et une vitesse angulaire
+# [ref pied 1, ref pied 2, vitesse_angulaire]
+# TODO déterminer une convention de rotation (trigo)
+global listeRotation
+listeRotation = []
+
+global masseMoteur
+masseMoteur = 50*10**(-3)
+
+Time(100)
+
 #------------------------------------------
-
-
-
-        
-        
-        
-        
-        
-        
