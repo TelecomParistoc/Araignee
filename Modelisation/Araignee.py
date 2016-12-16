@@ -61,6 +61,7 @@ def normalized(vector):
 def Time(iterations):
     global vitesse,motSpeedList,motAngleList, contact, contactList
     for i in range(iterations):
+        print(i)
         if not contact:
             vitesse[2]-=g*dt*100# en cm.s-1
             move(np.multiply(vitesse,dt),listeObjets)
@@ -153,6 +154,8 @@ def Time(iterations):
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
 
         if contact:#respect des dimensions forcé
+           
+            
             u=[0.0,0.0,0.0]
             for i in range(4):
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
@@ -163,6 +166,47 @@ def Time(iterations):
             vec=np.subtract(u,ObjetParNom["centre"])[0]
             move(vec,[ObjetParNom["plateforme"],ObjetParNom["centre"]])
             vitesse=np.multiply(vec,1.0/dt)
+            print("deform",listeDeformationPattes())    
+            
+            listeDef=listeDeformationPattes()
+            listeContacts=listePatteContact()
+            defMaxInd=0
+            for i in range(4):
+                if i in listeContacts:
+                    if abs(listeDef[i])>abs(listeDef[defMaxInd]):
+                        defMaxInd=i
+            if listeDef[defMaxInd]>0:
+                oppose=(defMaxInd+2)%4
+                d=listeDef[defMaxInd]-listeDef[oppose]
+                d=d*0.5
+                delta=abs(ObjetParNom["centre"][0][2]-ObjetParNom["plateforme"][defMaxInd][2])
+                theta=np.arcsin(delta/(np.sqrt(longueur**2+largeur**2)*0.5))
+                alpha=np.arctan((abs(delta-d)/(np.cos(theta)*np.sqrt(longueur**2+largeur**2)*0.5)))
+                angle=abs(theta-alpha)
+                print("angle",angle)
+                u=np.subtract(ObjetParNom["plateforme"][defMaxInd],ObjetParNom["centre"])
+                v=np.add(u,[0,0,1])
+                vector=np.cross(u,v)
+                print(u,v)
+                print("vector",vector)
+                rotation(ObjetParNom["patte"+str(oppose)+"Inf2"][1], vector[0], -angle/dt, listeObjets)
+                
+            elif listeDef[defMaxInd]<0:
+                oppose=(defMaxInd+2)%4
+                d=listeDef[defMaxInd]-listeDef[oppose]
+                d=d*0.5
+                theta=np.arcsin(delta/(np.sqrt(longueur**2+largeur**2)*0.5))
+                alpha=np.arctan((abs(delta-d)/(np.cos(theta)*np.sqrt(longueur**2+largeur**2)*0.5)))
+                angle=abs(theta-alpha)
+                print("angle",angle)
+                u=np.subtract(ObjetParNom["plateforme"][defMaxInd],ObjetParNom["centre"])
+                v=np.add(u,[0,0,1])
+                print(u,v)
+                vector=np.cross(u,v)
+                print("vector",vector)
+                rotation(ObjetParNom["patte"+str(defMaxInd)+"Inf2"][1], vector[0], angle/dt, listeObjets)
+                
+                
             for i in range(4):
                 u=[0.0,0.0,-1.0]
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
@@ -175,8 +219,24 @@ def Time(iterations):
                 move(np.subtract(ObjetParNom["plateforme"][i],u),ObjetParNom["patte"+str(i)]+[ObjetParNom["fixationInf"+str(i)],ObjetParNom["fixationSup"+str(i)]])
         testContact()
         update(listeObjets)
-
-
+        print("0",listeDeformationPattes())
+    
+def listePatteContact():
+    l=[]
+    for i in range(4):
+        if contactList[i]:
+            l.append(i)
+            
+    return(l)
+    
+def listeDeformationPattes():
+    L=[]
+    for i in range(4):
+        deformation=ObjetParNom["fixationInf"+str(i)][0][2]-(ObjetParNom["plateforme"][i][2]+1)
+        L.append(deformation)
+    return(L)
+    
+"""
 def testContact():
     global vitesse,contact,contactList
     i=0
@@ -206,6 +266,7 @@ def testContact():
         contact=True
         if vitesse[2]<0:
             vitesse[2]=0
+"""        
 
 
 def posPieds():
@@ -217,6 +278,20 @@ def posPieds():
         if contactList[i]:
             listePieds += [[i, ObjetParNom["patte"+str(i)+"Inf2"][1][0:2]]]
     return listePieds
+
+
+def testContact():
+    global vitesse,contact,contactList
+    contactList=[False,False,False,False]
+    contact=False
+    for a in range(4):
+        if ObjetParNom["patte"+str(a)+"Inf2"][1][2]<=0:
+            contactList[a]=True
+    if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
+        contact=True
+        if vitesse[2]<0:
+            vitesse[2]=0    
+
 
 
 def testPosMot(a,i):
@@ -287,7 +362,7 @@ longueurSup2Patte=9
 longueurInf1Patte=3#pas utilisé dans cette version car fixée par les autres morceaux
 longueurInf2Patte=9
 angleInfPatte=0.157
-centre=[0,0,50]
+centre=[0,0,5]
 NW=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]]
 NE=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]]
 SE=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]]
