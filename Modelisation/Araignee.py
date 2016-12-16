@@ -417,10 +417,10 @@ g=9.81
 
 
 
-mot0Speed=[2,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot0Speed=[5,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
 mot1Speed=[5,0]
-mot2Speed=[0,1]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[0,1]
+mot2Speed=[5,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[5,0]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -433,8 +433,7 @@ motAngleLim=[[3.14/5,-3.14/5],[3.14/6,-3.14/4]]#[[max,min],[max,min]]  vert,hori
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
     
-Time(150)
-
+Time(30)
 #------------------------------------------
 
 
