@@ -491,7 +491,6 @@ motAngleLim=[[3.14/5,-3.14/5],[3.14/6,-3.14/4]]#[[max,min],[max,min]]  vert,hori
 motSpeedList=[mot0Speed,mot1Speed,mot2Speed,mot3Speed]
 motAngleList=[mot0Angle,mot1Angle,mot2Angle,mot3Angle]
 
-
 # axesRotation : liste de listes contenant un axe et une vitesse angulaire
 # [ref pied 1, ref pied 2, vitesse_angulaire]
 # TODO déterminer une convention de rotation (trigo)
