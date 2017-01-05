@@ -39,11 +39,8 @@ def axeRotation(listePieds, centreGravite):
     listePieds : [[num du pied, coordonnees2D]]"""
 
     n = len(listePieds)
-    listeCoord = [elt[1] for elt in listePieds]
 
     if n == 1:
-        projete = centreGravite[0:2] + [0]
-        vecteurNormal = np.subtract(projete, listeCoord[0])
         return (listePieds[0][0], None)
         # Renvoie None pour dire qu'il n'y a qu'un seul pieds
         # TODO traiter ce cas en aval
@@ -53,7 +50,7 @@ def axeRotation(listePieds, centreGravite):
 
     elif n == 3:
         liste = rotTriangle(listePieds, centreGravite)
-        if liste[1]:
+        if liste[0]:
             return(liste[1], liste[2])
         else:
             return(None, None)
