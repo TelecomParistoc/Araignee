@@ -40,6 +40,9 @@ def axeRotation(listePieds, centreGravite):
 
     n = len(listePieds)
 
+    # TODO TRAITER N == 0 (robot en l'air, inertie de la rotation) peut-être
+    # à traiter directement dans updateRot à l'aide de la variable contact
+
     if n == 1:
         return (listePieds[0][0], None)
         # Renvoie None pour dire qu'il n'y a qu'un seul pieds

@@ -5,10 +5,13 @@
 Ce script temporaire est sauvegardé ici :
 /home/romain/.spyder2/.temp.py
 """
+afficher = False
 
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-import matplotlib.pyplot as plt
+if afficher:
+    from mpl_toolkits.mplot3d import Axes3D
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+    import matplotlib.pyplot as plt
+
 import numpy as np
 from geometrie import*
 
@@ -44,9 +47,9 @@ def update(listeObjets):
         Coord=[]
         for a in range(3):
             Coord.append([])
-            for b in range(len(objet)): 
+            for b in range(len(objet)):
                 Coord[a].append(objet[b][a])
-    
+
         ax.add_collection3d(Poly3DCollection([zip(Coord[0],Coord[1],Coord[2])]))
     ax.autoscale_view(True,True,True,True)
     ax.set_xlim3d(-axlim,axlim)
@@ -61,13 +64,13 @@ mot0Speed=0
 mot1Speed=0
 
 def Time(iterations):
-    
+
     for i in range(iterations):
         if np.sign(motSpeedList[0])==np.sign(motSpeedList[1]):
             delta=abs(motSpeedList[0]-motSpeedList[1])
             liste=[abs(motSpeedList[0]),abs(motSpeedList[1])]
             if delta>0:
-                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],delta*np.sign(abs(motSpeedList[0])-abs(motSpeedList[1]))*np.sign(motSpeedList[0]),listeObjets)            
+                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],delta*np.sign(abs(motSpeedList[0])-abs(motSpeedList[1]))*np.sign(motSpeedList[0]),listeObjets)
             speed=max(abs(motSpeedList[0]),abs(motSpeedList[1]))-delta
             vec=np.subtract(ObjetParNom["plateformeSup"][0],ObjetParNom["plateformeSup"][3])
             vec=normalized(vec)
@@ -77,16 +80,17 @@ def Time(iterations):
             liste=[abs(motSpeedList[0]),abs(motSpeedList[1])]
             delta=abs(liste[0]-liste[1])
             if delta>0:
-                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],-delta*np.sign(motSpeedList[1]-motSpeedList[0]),listeObjets)            
+                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],-delta*np.sign(motSpeedList[1]-motSpeedList[0]),listeObjets)
             speed=max(liste)-delta
             speed=speed*np.sign(motSpeedList[0])
             alpha=rayonRoues*2./largeur
             if speed!=0:
                 rotation(ObjetParNom["centre"][0],[0,0,1],speed*alpha,listeObjets)
-        update(listeObjets)
-        
-        
-    
+        if afficher:
+            update(listeObjets)
+
+
+
 
 def testPosMot(a,i):
     global motAngleList,motAngleLim
@@ -107,7 +111,7 @@ def sequenceBuilder(N):
             speed=input("Speed : ")
             duration=input("Duration : ")
             seqRight.append([speed,duration])
-        else : 
+        else :
             print("Error")
             return
     return([seqLeft,seqRight])
@@ -166,9 +170,9 @@ def evaluate():
     objectif=[0,50,5]
     dist=distancePointPoint(objectif,ObjetParNom["centre"][0])
     return(min(1,1/dist))
-        
+
 def reInit():
-    
+
     centre=[0,0,5]
     NWSup=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]-hauteur*0.5]
     NESup=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]-hauteur*0.5]
@@ -178,7 +182,7 @@ def reInit():
     NEInf=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]+hauteur*0.5]
     SEInf=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]+hauteur*0.5]
     SWInf=[centre[0]-largeur*0.5,centre[1]-longueur*0.5,centre[2]+hauteur*0.5]
-    
+
     fixRoueW=[centre[0]-largeur*0.5,centre[1],centre[2]]
     fixRoueE=[centre[0]+largeur*0.5,centre[1],centre[2]]
     listeObjets=[[NWSup,NESup,SESup,SWSup],[NWInf,NEInf,SEInf,SWInf],[NWSup,NESup,NEInf,NWInf],[NESup,SESup,SEInf,NEInf],[SWSup,SESup,SEInf,SWInf],[NWSup,SWSup,SWInf,NWInf],[centre],[fixRoueW],[fixRoueE]]
@@ -192,18 +196,21 @@ def reInit():
     ObjetParNom["centre"]=listeObjets[6]
     ObjetParNom["fixRoue0"]=listeObjets[7]
     ObjetParNom["fixRoue1"]=listeObjets[8]
-    
+
     global motSpeedList
     motSpeedList=[0,0]
-    update(listeObjets)    
-    
-    
-    
+    if afficher:
+        update(listeObjets)
+
+
+
 #--------------Initialisation---------------
-fig = plt.figure()
-ax = Axes3D(fig)
-plt.ion()
-plt.show()
+
+if afficher:
+    fig = plt.figure()
+    ax = Axes3D(fig)
+    plt.ion()
+    plt.show()
 
 axlim=100
 
@@ -254,8 +261,8 @@ ObjetParNom["centre"]=listeObjets[6]
 ObjetParNom["fixRoue0"]=listeObjets[7]
 ObjetParNom["fixRoue1"]=listeObjets[8]
 
-
-update(listeObjets)
+if afficher:
+    update(listeObjets)
 
 
 
@@ -265,4 +272,3 @@ dt=0.01#dt intervalle de temps en secondes
 global motSpeedList
 motSpeedList=[mot0Speed,mot1Speed]#0 = gauche
 #------------------------------------------
-

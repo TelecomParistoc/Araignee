@@ -154,15 +154,17 @@ def Time(iterations):
                         move([0,0,-ObjetParNom["patte"+str(a)+"Inf2"][1][2]-0.01],[ObjetParNom["fixationSup"+str(a)],ObjetParNom["fixationInf"+str(a)]]+ObjetParNom["patte"+str(a)])
 
         if contact:#respect des dimensions forcé
-           
-            
+
+
+            # TODO traiter les mouvements liés à l'inertie du robot
+
             u=[0.0,0.0,0.0]
             for i in range(4):
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
                 u[1]+=ObjetParNom["fixationInf"+str(i)][0][1]
                 u[2]+=ObjetParNom["fixationInf"+str(i)][0][2]
             u=np.multiply(u,0.25)
-            u[2]-=1
+            u[2]-=1 # TODO régler le problème des pattes en biais
             vec=np.subtract(u,ObjetParNom["centre"])[0]
             move(vec,[ObjetParNom["plateforme"],ObjetParNom["centre"]])
             vitesse=np.multiply(vec,1.0/dt)
@@ -190,7 +192,7 @@ def Time(iterations):
                 print(u,v)
                 print("vector",vector)
                 rotation(ObjetParNom["patte"+str(oppose)+"Inf2"][1], vector[0], -angle/dt, listeObjets)
-                
+
             elif listeDef[defMaxInd]<0:
                 oppose=(defMaxInd+2)%4
                 d=listeDef[defMaxInd]-listeDef[oppose]
@@ -223,22 +225,22 @@ def Time(iterations):
         testContact()
         update(listeObjets)
         print("0",listeDeformationPattes())
-    
+
 def listePatteContact():
     l=[]
     for i in range(4):
         if contactList[i]:
             l.append(i)
-            
+
     return(l)
-    
+
 def listeDeformationPattes():
     L=[]
     for i in range(4):
         deformation=ObjetParNom["fixationInf"+str(i)][0][2]-(ObjetParNom["plateforme"][i][2]+1)
         L.append(deformation)
     return(L)
-    
+
 """
 def testContact():
     global vitesse,contact,contactList
@@ -269,7 +271,7 @@ def testContact():
         contact=True
         if vitesse[2]<0:
             vitesse[2]=0
-"""        
+"""
 
 
 def posPieds():
@@ -293,7 +295,7 @@ def testContact():
     if (contactList[0] or contactList[1] or contactList[2] or contactList[3]):
         contact=True
         if vitesse[2]<0:
-            vitesse[2]=0    
+            vitesse[2]=0
 
 
 
