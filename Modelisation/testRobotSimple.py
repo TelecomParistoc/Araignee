@@ -57,8 +57,8 @@ def update(listeObjets):
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
 
-mot0Speed=-7
-mot1Speed=7
+mot0Speed=0
+mot1Speed=0
 
 def Time(iterations):
     
@@ -69,28 +69,22 @@ def Time(iterations):
             if delta>0:
                 rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],delta*np.sign(abs(motSpeedList[0])-abs(motSpeedList[1]))*np.sign(motSpeedList[0]),listeObjets)            
             speed=max(abs(motSpeedList[0]),abs(motSpeedList[1]))-delta
-            print(speed)
-            print(speed*np.sign(motSpeedList[0]))
             vec=np.subtract(ObjetParNom["plateformeSup"][0],ObjetParNom["plateformeSup"][3])
             vec=normalized(vec)
             vec=np.multiply(vec,speed*np.sign(motSpeedList[0])*rayonRoues*dt)
-            print(vec)
             move(vec,listeObjets)
         else:
             liste=[abs(motSpeedList[0]),abs(motSpeedList[1])]
             delta=abs(liste[0]-liste[1])
             if delta>0:
-                print(str(np.argmin(liste)),delta*np.sign(motSpeedList[1]-motSpeedList[0]))
                 rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],-delta*np.sign(motSpeedList[1]-motSpeedList[0]),listeObjets)            
             speed=max(liste)-delta
             speed=speed*np.sign(motSpeedList[0])
-            print(speed)
             alpha=rayonRoues*2./largeur
             if speed!=0:
                 rotation(ObjetParNom["centre"][0],[0,0,1],speed*alpha,listeObjets)
         update(listeObjets)
-        if len(seq[0])!=0 or len(seq[1])!=0:
-            sequence()
+        
         
     
 
@@ -120,10 +114,10 @@ def sequenceBuilder(N):
 
 
 
-seq=[[],[]]
+
 seqLeft=[[10,30],[20,40]]
 seqRight=[[10,30],[20,20]]
-#seq=[seqLeft,seqRight]
+seq=[seqLeft,seqRight]
 
 
 def sequence():
@@ -150,6 +144,61 @@ def sequence():
     Time(1)
 
 
+
+stepByStepSeqLeft=[10,10,10,3,3,10,3,10,10,10,10,10,10,10]
+stepByStepSeqRight=[10,10,10,3,3,3,3,10,10,10,10,10,10,10]
+stepByStepSeq=[stepByStepSeqLeft,stepByStepSeqRight]
+
+
+
+def stepByStep(stepByStepSeq):
+    if len(stepByStepSeq[0])>0:
+        motSpeedList[0]=stepByStepSeq[0][0]
+        motSpeedList[1]=stepByStepSeq[1][0]
+        stepByStepSeq[0].remove(stepByStepSeq[0][0])
+        stepByStepSeq[1].remove(stepByStepSeq[1][0])
+        Time(1)
+        return(stepByStep(stepByStepSeq))
+    else:
+        return(evaluate())
+
+def evaluate():
+    objectif=[0,50,5]
+    dist=distancePointPoint(objectif,ObjetParNom["centre"][0])
+    return(min(1,1/dist))
+        
+def reInit():
+    
+    centre=[0,0,5]
+    NWSup=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]-hauteur*0.5]
+    NESup=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]-hauteur*0.5]
+    SESup=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]-hauteur*0.5]
+    SWSup=[centre[0]-largeur*0.5,centre[1]-longueur*0.5,centre[2]-hauteur*0.5]
+    NWInf=[centre[0]-largeur*0.5,centre[1]+longueur*0.5,centre[2]+hauteur*0.5]
+    NEInf=[centre[0]+largeur*0.5,centre[1]+longueur*0.5,centre[2]+hauteur*0.5]
+    SEInf=[centre[0]+largeur*0.5,centre[1]-longueur*0.5,centre[2]+hauteur*0.5]
+    SWInf=[centre[0]-largeur*0.5,centre[1]-longueur*0.5,centre[2]+hauteur*0.5]
+    
+    fixRoueW=[centre[0]-largeur*0.5,centre[1],centre[2]]
+    fixRoueE=[centre[0]+largeur*0.5,centre[1],centre[2]]
+    listeObjets=[[NWSup,NESup,SESup,SWSup],[NWInf,NEInf,SEInf,SWInf],[NWSup,NESup,NEInf,NWInf],[NESup,SESup,SEInf,NEInf],[SWSup,SESup,SEInf,SWInf],[NWSup,SWSup,SWInf,NWInf],[centre],[fixRoueW],[fixRoueE]]
+    ObjetParNom["robot"]=listeObjets
+    ObjetParNom["plateformeSup"]=listeObjets[0]
+    ObjetParNom["plateformeInf"]=listeObjets[1]
+    ObjetParNom["verticaleN"]=listeObjets[2]
+    ObjetParNom["verticaleE"]=listeObjets[3]
+    ObjetParNom["verticaleS"]=listeObjets[4]
+    ObjetParNom["verticaleW"]=listeObjets[5]
+    ObjetParNom["centre"]=listeObjets[6]
+    ObjetParNom["fixRoue0"]=listeObjets[7]
+    ObjetParNom["fixRoue1"]=listeObjets[8]
+    
+    global motSpeedList
+    motSpeedList=[0,0]
+    update(listeObjets)    
+    
+    
+    
 #--------------Initialisation---------------
 fig = plt.figure()
 ax = Axes3D(fig)
@@ -214,6 +263,6 @@ dt=0.01#dt intervalle de temps en secondes
 
 
 global motSpeedList
-motSpeedList=[mot0Speed,mot1Speed]
+motSpeedList=[mot0Speed,mot1Speed]#0 = gauche
 #------------------------------------------
 
