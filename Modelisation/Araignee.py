@@ -168,8 +168,8 @@ def Time(iterations):
             vec=np.subtract(u,ObjetParNom["centre"])[0]
             move(vec,[ObjetParNom["plateforme"],ObjetParNom["centre"]])
             vitesse=np.multiply(vec,1.0/dt)
-            print("deform",listeDeformationPattes())
-
+            print("deform",listeDeformationPattes())    
+            """
             listeDef=listeDeformationPattes()
             listeContacts=listePatteContact()
             defMaxInd=0
@@ -207,8 +207,8 @@ def Time(iterations):
                 vector=np.cross(u,v)
                 print("vector",vector)
                 rotation(ObjetParNom["patte"+str(defMaxInd)+"Inf2"][1], vector[0], angle/dt, listeObjets)
-
-
+                """
+                
             for i in range(4):
                 u=[0.0,0.0,-1.0]
                 u[0]+=ObjetParNom["fixationInf"+str(i)][0][0]
@@ -219,6 +219,9 @@ def Time(iterations):
                 else:
                     u[0]-=0.5
                 move(np.subtract(ObjetParNom["plateforme"][i],u),ObjetParNom["patte"+str(i)]+[ObjetParNom["fixationInf"+str(i)],ObjetParNom["fixationSup"+str(i)]])
+                
+                
+        
         testContact()
         update(listeObjets)
         print("0",listeDeformationPattes())
@@ -352,7 +355,7 @@ ax = Axes3D(fig)
 plt.ion()
 plt.show()
 
-axlim=100
+axlim=50
 
 longueur=15
 largeur=10
@@ -475,10 +478,10 @@ g=9.81
 
 
 
-mot0Speed=[0,0]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=[0,0]
-mot2Speed=[0,0]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
-mot3Speed=[0,0]
+mot0Speed=[10,10]# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
+mot1Speed=[10,10]
+mot2Speed=[10,10]#[0]>0 --> patte vers le haut // [1]>0 --> patte vers l'avant
+mot3Speed=[10,10]
 
 mot0Angle=[0,0]
 mot1Angle=[0,0]
@@ -500,6 +503,6 @@ listeRotation = []
 global masseMoteur
 masseMoteur = 50*10**(-3)
 
-Time(100)
+
 
 #------------------------------------------

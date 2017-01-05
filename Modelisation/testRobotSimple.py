@@ -57,8 +57,8 @@ def update(listeObjets):
 def normalized(vector):
     return(vector/np.linalg.norm(vector))
 
-mot0Speed=+7# vitesse des moteurs pour mvt vertical et horizontal respectivement  en rad.s-1
-mot1Speed=+7
+mot0Speed=-7
+mot1Speed=7
 
 def Time(iterations):
     
@@ -77,17 +77,20 @@ def Time(iterations):
             print(vec)
             move(vec,listeObjets)
         else:
-            print("else")
             liste=[abs(motSpeedList[0]),abs(motSpeedList[1])]
             delta=abs(liste[0]-liste[1])
             if delta>0:
-                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],delta*np.sign(motSpeedList[1]-motSpeedList[0]),listeObjets)            
+                print(str(np.argmin(liste)),delta*np.sign(motSpeedList[1]-motSpeedList[0]))
+                rotation(ObjetParNom["fixRoue"+str(np.argmin(liste))][0],[0,0,1],-delta*np.sign(motSpeedList[1]-motSpeedList[0]),listeObjets)            
             speed=max(liste)-delta
             speed=speed*np.sign(motSpeedList[0])
+            print(speed)
             alpha=rayonRoues*2./largeur
             if speed!=0:
                 rotation(ObjetParNom["centre"][0],[0,0,1],speed*alpha,listeObjets)
         update(listeObjets)
+        if len(seq[0])!=0 or len(seq[1])!=0:
+            sequence()
         
     
 
@@ -96,7 +99,55 @@ def testPosMot(a,i):
     if motAngleList[a][i]>motAngleLim[i][0]-abs(motSpeedList[a][i]*dt) or motAngleList[a][i]<motAngleLim[i][1]+abs(motSpeedList[a][i]*dt):#limite avec marge d'erreur car calcul temps discret
         motSpeedList[a][i]*=-1
 
-        
+
+def sequenceBuilder(N):
+    seqLeft=[]
+    seqRight=[]
+    for i in range(N):
+        mot=input("Moteur : ")
+        if mot == 0:
+            speed=input("Speed : ")
+            duration=input("Duration : ")
+            seqLeft.append([speed,duration])
+        elif mot == 1:
+            speed=input("Speed : ")
+            duration=input("Duration : ")
+            seqRight.append([speed,duration])
+        else : 
+            print("Error")
+            return
+    return([seqLeft,seqRight])
+
+
+
+seq=[[],[]]
+seqLeft=[[10,30],[20,40]]
+seqRight=[[10,30],[20,20]]
+#seq=[seqLeft,seqRight]
+
+
+def sequence():
+    if len(seq[0])>0:
+        if seq[0][0][1]>0:
+            motSpeedList[0]=seq[0][0][0]
+            seq[0][0][1]-=1
+        else:
+            seq[0].remove(seq[0][0])
+            if len(seq[0])>0:
+                motSpeedList[0]=seq[0][0][0]
+            else:
+                motSpeedList[0]=0
+    if len(seq[1])>0:
+        if seq[1][0][1]>0:
+            motSpeedList[1]=seq[1][0][0]
+            seq[1][0][1]-=1
+        else:
+            seq[1].remove(seq[1][0])
+            if len(seq[1])>0:
+                motSpeedList[1]=seq[1][0][0]
+            else:
+                motSpeedList[1]=0
+    Time(1)
 
 
 #--------------Initialisation---------------
@@ -162,16 +213,7 @@ update(listeObjets)
 dt=0.01#dt intervalle de temps en secondes
 
 
-
-
-
-
-
-
-
-
 global motSpeedList
 motSpeedList=[mot0Speed,mot1Speed]
-Time(100)
 #------------------------------------------
 
